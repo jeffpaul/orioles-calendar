@@ -43,7 +43,6 @@
     <label><input type="checkbox" id="show-b" checked><span class="swatch b"></span>Birthdays</label>
     <label><input type="checkbox" id="show-a" checked><span class="swatch a"></span>Acquisitions</label>
     <label><input type="checkbox" id="show-x"><span class="swatch x"></span>Deaths</label>
-    <label class="era-toggle"><input type="checkbox" id="show-early" checked>Include Browns &amp; Brewers years (1901–1953)</label>
   </div>
 
   <p class="heat-legend" aria-hidden="true">Shading:
@@ -53,16 +52,25 @@
   <section class="story" id="story" aria-live="polite"></section>
 
   <div class="layout">
-    <div class="grid" id="grid" role="grid" aria-busy="true"></div>
+    <div>
+      <div class="grid" id="grid" role="grid" aria-busy="true"></div>
+      <fieldset class="eras" id="eras">
+        <legend>Franchise eras</legend>
+        <label><input type="checkbox" value="Brewers" checked><span>Brewers<small>1901</small></span></label>
+        <label><input type="checkbox" value="Browns" checked><span>Browns<small>1902–53</small></span></label>
+        <label><input type="checkbox" value="Orioles" checked><span>Orioles<small>1954–</small></span></label>
+      </fieldset>
+    </div>
     <aside class="panel" id="panel" aria-live="polite"></aside>
   </div>
 
   <footer id="footer">
     <p>The franchise began as the Milwaukee Brewers (1901), became the St. Louis Browns (1902–1953)
-      and moved to Baltimore in 1954. Items from before 1954 carry an era tag.</p>
+      and moved to Baltimore in 1954. Items from before 1954 carry an era tag, and the eras below the calendar
+      choose which of the three teams to show.</p>
     <p>Data: Retrosheet (games, play-by-play, biographies and transactions through the last season it has published),
       the MLB Stats API (the current season and recent transactions), Baseball-Reference (WAR) and the Chadwick
-      Baseball Bureau register (player IDs). Built by the scripts in <code>pipeline/</code>.</p>
+      Baseball Bureau register (player IDs).</p>
     <p>Milestones are no-hitters, perfect games, cycles, four-homer games, round-number career totals reached in
       a franchise uniform, division and pennant clinches, postseason series wins and hand-picked moments.
       Games are walk-off wins, inside-the-park home runs, triple plays, games of 18+ innings, wins by 15+ runs,
