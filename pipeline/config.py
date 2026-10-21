@@ -1,6 +1,7 @@
 """Franchise facts the pipeline can't derive from the data itself."""
 
 MLB_TEAM_ID = 110
+SITE_URL = "https://jeffpaul.github.io/orioles-calendar/"
 
 # Retrosheet team codes for the franchise, with the seasons each was used.
 RETRO_TEAMS = {"MLA": (1901, 1901), "SLA": (1902, 1953), "BAL": (1954, 9999)}

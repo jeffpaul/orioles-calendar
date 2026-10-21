@@ -13,7 +13,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from . import checks, config, derive, retro, sources, statsapi
+from . import checks, config, derive, ical, retro, sources, statsapi
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "site" / "data"
@@ -249,6 +249,11 @@ def main(argv=None):
     write(OUT / "events.json", events)
     write(OUT / "records.json", recs)
     write(OUT / "meta.json", meta, indent=1)
+    stamp = meta["last_game"].replace("-", "") + "T000000Z"
+    for filename, name, first_year in (("calendar.ics", "Orioles Calendar", 1901),
+                                       ("calendar-orioles.ics", "Orioles Calendar (1954 on)", 1954)):
+        text = ical.feed(players, events, config.SITE_URL, stamp, name, first_year)
+        (ROOT / "site" / filename).write_text(text, encoding="utf-8", newline="")
     log(f"Wrote {len(players):,} players, {len(events):,} events, {len(recs)} record days (last game {meta['last_game']})")
 
 

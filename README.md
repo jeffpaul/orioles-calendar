@@ -35,6 +35,8 @@ Clinch dates are computed from Retrosheet game logs (or Stats API schedules for 
 - `records.json`: `"MM-DD": [[year, W, L, T, postseason W, postseason L], …]`.
 - `meta.json`: build time, last game date, and which seasons came from which source.
 
+`site/calendar.ics` and `site/calendar-orioles.ics` (1954 on) are subscribable iCalendar feeds: one all-day event per date, repeating yearly, titled with that date's most notable item. Routine debuts and lesser players' birthdays stay on the site only.
+
 `pipeline/checks.py` runs before anything is written and fails the build on dangling player IDs, malformed dates, missing WAR, missing seasons, or record totals that don't match the games.
 
 ## Credits

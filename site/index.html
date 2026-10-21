@@ -42,6 +42,10 @@
     <label class="era-toggle"><input type="checkbox" id="show-early" checked>Include Browns &amp; Brewers years (1901–1953)</label>
   </div>
 
+  <p class="heat-legend" aria-hidden="true">Shading:
+    <span class="day heat-1"></span> people only <span class="day heat-2"></span> a memorable game
+    <span class="day heat-3"></span> a milestone <span class="day heat-4"></span> a title, no-hitter or landmark moment</p>
+
   <section class="story" id="story" aria-live="polite"></section>
 
   <div class="layout">
@@ -64,6 +68,11 @@
       date through the year being viewed.</p>
     <p>The information used here was obtained free of charge from and is copyrighted by Retrosheet.
       Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org">www.retrosheet.org</a>.</p>
+    <p class="subscribe">Subscribe in your calendar app: one event a year for every date, led by its best story.
+      <a id="ical-all" href="calendar.ics">All franchise history</a>
+      <a id="ical-orioles" href="calendar-orioles.ics">Orioles years only (1954 on)</a></p>
+    <p class="sub">For Google Calendar, choose "Other calendars", then "From URL", and paste
+      <code id="ical-url">calendar.ics</code> (or the same address ending in <code>calendar-orioles.ics</code>).</p>
     <p class="sub" id="built"></p>
   </footer>
 </main>
