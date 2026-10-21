@@ -1,0 +1,36 @@
+{
+ "built": "2026-10-21T03:07:25+00:00",
+ "franchise": [
+  {
+   "key": "brewers",
+   "name": "Milwaukee Brewers",
+   "short": "Brewers",
+   "first": 1901,
+   "last": 1901
+  },
+  {
+   "key": "browns",
+   "name": "St. Louis Browns",
+   "short": "Browns",
+   "first": 1902,
+   "last": 1953
+  },
+  {
+   "key": "orioles",
+   "name": "Baltimore Orioles",
+   "short": "Orioles",
+   "first": 1954,
+   "last": 9999
+  }
+ ],
+ "last_game": "2026-09-25",
+ "retrosheet_through": 2025,
+ "statsapi_seasons": [
+  2026
+ ],
+ "counts": {
+  "players": 2050,
+  "events": 5261,
+  "games": 19739
+ }
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "d": "1951-08-19",
+    "title": "Eddie Gaedel, 3 feet 7 inches tall, walks in his only plate appearance for the Browns",
+    "ids": ["gaede101"],
+    "check": "appeared"
+  },
+  {
+    "d": "1995-09-06",
+    "title": "Cal Ripken Jr. plays his 2,131st consecutive game, passing Lou Gehrig",
+    "ids": ["ripkc001"],
+    "check": "appeared"
+  },
+  {
+    "d": "1998-09-20",
+    "title": "Cal Ripken Jr. sits out, ending his streak at 2,632 consecutive games",
+    "ids": ["ripkc001"],
+    "check": "absent"
+  }
+]
