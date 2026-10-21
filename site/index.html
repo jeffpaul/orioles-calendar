@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orioles Calendar</title>
+<meta name="description" content="Birthdays, debuts, trades, milestones and great games from Baltimore Orioles and St. Louis Browns history, day by day.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1>Orioles Calendar</h1>
+      <p class="sub" id="summary">Loading franchise history…</p>
+    </div>
+    <div class="search">
+      <label for="search" class="sub">Find a player</label>
+      <input id="search" type="search" placeholder="e.g. Brooks Robinson" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="results">
+      <ul class="results" id="results" role="listbox" hidden></ul>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <h2 id="title" aria-live="polite"></h2>
+    <div class="nav">
+      <button id="prev" aria-label="Previous month">&#8592;</button>
+      <button id="today">Today</button>
+      <button id="next" aria-label="Next month">&#8594;</button>
+      <select id="month" aria-label="Month"></select>
+      <input id="year" type="number" min="1901" max="2100" aria-label="Year">
+    </div>
+  </div>
+  <div class="filters" role="group" aria-label="What to show">
+    <label><input type="checkbox" id="show-m" checked><span class="swatch m"></span>Milestones</label>
+    <label><input type="checkbox" id="show-g" checked><span class="swatch g"></span>Games</label>
+    <label><input type="checkbox" id="show-d" checked><span class="swatch d"></span>Debuts &amp; final games</label>
+    <label><input type="checkbox" id="show-b" checked><span class="swatch b"></span>Birthdays</label>
+    <label><input type="checkbox" id="show-a" checked><span class="swatch a"></span>Acquisitions</label>
+    <label><input type="checkbox" id="show-x"><span class="swatch x"></span>Deaths</label>
+    <label class="era-toggle"><input type="checkbox" id="show-early" checked>Include Browns &amp; Brewers years (1901–1953)</label>
+  </div>
+
+  <div class="layout">
+    <div class="grid" id="grid" role="grid" aria-busy="true"></div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <footer id="footer">
+    <p>The franchise began as the Milwaukee Brewers (1901), became the St. Louis Browns (1902–1953)
+      and moved to Baltimore in 1954. Items from before 1954 carry an era tag.</p>
+    <p>Data: Retrosheet (games, play-by-play, biographies and transactions through the last season it has published),
+      the MLB Stats API (the current season and recent transactions), Baseball-Reference (WAR) and the Chadwick
+      Baseball Bureau register (player IDs). Built by the scripts in <code>pipeline/</code>.</p>
+    <p>Milestones are no-hitters, perfect games, cycles, four-homer games, round-number career totals reached in
+      a franchise uniform, division and pennant clinches, postseason series wins and hand-picked moments.
+      Games are walk-off wins, inside-the-park home runs, triple plays, games of 18+ innings, wins by 15+ runs,
+      three-homer and 15-strikeout games, and ballpark firsts and lasts. Walk-off hitters and inside-the-park
+      homers come from play-by-play, which Retrosheet doesn't have for every early game.
+      Feb&nbsp;29 items appear on Feb&nbsp;28 in non-leap years. All-time records count every franchise game on that
+      date through the year being viewed.</p>
+    <p>The information used here was obtained free of charge from and is copyrighted by Retrosheet.
+      Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org">www.retrosheet.org</a>.</p>
+    <p class="sub" id="built"></p>
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
