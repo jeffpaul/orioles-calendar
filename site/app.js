@@ -205,6 +205,16 @@
   const monthSel = $("month"), yearInput = $("year");
   MONTHS.forEach((m, i) => monthSel.add(new Option(m, i)));
 
+  // Shade a day by its best game or milestone: 0 nothing shown, 1 only
+  // people (birthdays, debuts, trades), 2 a memorable game, 3 a milestone,
+  // 4 a title, no-hitter or hand-picked moment.
+  const HEAT_STEPS = [28, 60, 85];
+  const heatLevel = items => {
+    if (!items.length) return 0;
+    const best = Math.max(0, ...items.filter(i => i.kind === "m" || i.kind === "g").map(i => i.score));
+    return best ? 1 + HEAT_STEPS.filter(s => best >= s).length : 1;
+  };
+
   function renderGrid() {
     title.textContent = `${MONTHS[view.month]} ${view.year}`;
     monthSel.value = view.month;
@@ -216,7 +226,7 @@
     for (let d = 1; d <= days; d++) {
       const items = itemsOn(view.year, view.month, d);
       const counts = KINDS.map(k => [k, items.filter(i => i.kind === k).length]).filter(([, n]) => n);
-      const cls = ["day"];
+      const cls = ["day", `heat-${heatLevel(items)}`];
       if (`${view.year}-${view.month}-${d}` === todayKey) cls.push("today");
       if (selected.year === view.year && selected.month === view.month && selected.day === d) cls.push("selected");
       const chips = items.slice(0, 3).map(i => `<span class="chip ${i.kind}">${esc(chipLabel(i))}</span>`).join("");
@@ -319,6 +329,13 @@
   // Navigation and state ----------------------------------------------------------
 
   function readHash() {
+    // "#10-01" (from the calendar feed) opens that date in the current year.
+    const md = location.hash.match(/^#(\d{2})-(\d{2})$/);
+    if (md) {
+      view = { year: now.getFullYear(), month: Math.min(11, Math.max(0, +md[1] - 1)) };
+      selected = { ...view, day: +md[2] };
+      return;
+    }
     const m = location.hash.match(/^#(\d{4})-(\d{2})(?:-(\d{2}))?(?:\/([\w:.-]+))?$/);
     if (!m) return;
     view = { year: +m[1], month: Math.min(11, Math.max(0, +m[2] - 1)) };
@@ -486,6 +503,12 @@
     $("summary").textContent = `${players.length.toLocaleString()} players · ${withAcq.toLocaleString()} with acquisition dates · ` +
       `${events.length.toLocaleString()} moments, 1901–${meta.last_game.slice(0, 4)}`;
     $("built").textContent = `Data through ${fmtDate(meta.last_game)}, refreshed ${new Date(meta.built).toLocaleDateString()}.`;
+    // webcal:// opens the subscribe dialog in Apple Calendar and Outlook.
+    $("ical-url").textContent = new URL("calendar.ics", location.href).href.replace(/#.*$/, "");
+    for (const id of ["ical-all", "ical-orioles"]) {
+      const a = $(id);
+      a.href = new URL(a.getAttribute("href"), location.href).href.replace(/^https?:/, "webcal:");
+    }
     readHash();
     render();
   }).catch(err => {
