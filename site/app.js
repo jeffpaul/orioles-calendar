@@ -487,7 +487,28 @@
       ${gameLine}`;
   }
 
-  function render() { renderStory(); renderGrid(); renderPanel(); writeHash(); }
+  // The header's counts and years, for the selected eras only.
+  function renderSummary() {
+    if (!eras.size) { $("summary").textContent = "No franchise eras selected below the calendar"; return; }
+    const shown = players.filter(playedIn);
+    const inEras = ys => ys.some(y => eras.has(eraName(y)));
+    const playing = shown.filter(p => inEras(p.y)).length;
+    const managers = shown.filter(p => p.m && inEras(p.m.y)).length;
+    const withAcq = shown.filter(p => (p.a || []).length).length;
+    const moments = events.filter(e => eras.has(eraName(+e.d.slice(0, 4)))).length;
+    const bounds = { Brewers: [1901, 1901], Browns: [1902, ORIOLES_FIRST - 1],
+                     Orioles: [ORIOLES_FIRST, +meta.last_game.slice(0, 4)] };
+    // Join neighbouring eras, so Browns + Orioles reads 1902–2026 and Brewers + Orioles 1901 and 1954–2026.
+    const ranges = [];
+    for (const e of ERAS.filter(e => eras.has(e))) {
+      const [lo, hi] = bounds[e];
+      if (ranges.length && ranges.at(-1)[1] === lo - 1) ranges.at(-1)[1] = hi; else ranges.push([lo, hi]);
+    }
+    $("summary").textContent = `${playing.toLocaleString()} players · ${managers} manager${managers === 1 ? "" : "s"} · ${withAcq.toLocaleString()} with acquisition dates · ` +
+      `${moments.toLocaleString()} moments, ${ranges.map(([lo, hi]) => span([lo, hi])).join(" and ")}`;
+  }
+
+  function render() { renderSummary(); renderStory(); renderGrid(); renderPanel(); writeHash(); }
 
   function goTo(year, month, day) {
     year = Math.max(1901, Math.min(2100, year));
@@ -629,11 +650,6 @@
     } catch {}
     eraBoxes.forEach(b => { b.checked = eras.has(b.value); });
     buildIndex();
-    const withAcq = players.filter(p => (p.a || []).length).length;
-    const managers = players.filter(p => p.m).length;
-    $("summary").textContent = `${players.filter(p => p.y.length).length.toLocaleString()} players · ${managers} managers · ` +
-      `${withAcq.toLocaleString()} with acquisition dates · ` +
-      `${events.length.toLocaleString()} moments, 1901–${meta.last_game.slice(0, 4)}`;
     $("built").textContent = `Data through ${fmtDate(meta.last_game)}, refreshed ${new Date(meta.built).toLocaleDateString()}.`;
     // webcal:// opens the subscribe dialog in Apple Calendar and Outlook.
     $("ical-url").textContent = new URL("calendar.ics", location.href).href.replace(/#.*$/, "");
