@@ -57,3 +57,23 @@ LONG_GAME_INNINGS = 18
 BIG_WIN_MARGIN = 15
 STRIKEOUT_GAME = 15
 HOMER_GAME = 3
+
+# Franchise wins as manager that count as milestones.
+MANAGER_WIN_THRESHOLDS = {500, 1000, 1500}
+
+# Hall of Fame induction ceremonies, by class: (ceremony date, ceremony year).
+# Checked against each year's Wikipedia "Baseball Hall of Fame balloting"
+# article. Only classes with a franchise member are listed; a new one logs
+# a reminder at build time. None means no ceremony on record (wartime
+# classes), so no calendar event.
+HOF_CEREMONIES = {
+    1939: ("1939-06-12", 1939), 1942: None, 1945: None, 1946: ("1947-07-21", 1947),
+    1953: ("1953-07-27", 1953), 1964: ("1964-07-27", 1964), 1967: ("1967-07-24", 1967),
+    1968: ("1968-07-22", 1968), 1971: ("1971-08-09", 1971), 1974: ("1974-08-12", 1974),
+    1976: ("1976-08-09", 1976), 1982: ("1982-08-01", 1982), 1983: ("1983-07-31", 1983),
+    1984: ("1984-08-12", 1984), 1985: ("1985-07-28", 1985), 1990: ("1990-08-06", 1990),
+    1993: ("1993-08-01", 1993), 1996: ("1996-08-04", 1996), 2003: ("2003-07-27", 2003),
+    2006: ("2006-07-30", 2006), 2007: ("2007-07-29", 2007), 2008: ("2008-07-27", 2008),
+    2010: ("2010-07-25", 2010), 2011: ("2011-07-24", 2011), 2017: ("2017-07-30", 2017),
+    2018: ("2018-07-29", 2018), 2019: ("2019-07-21", 2019),
+}

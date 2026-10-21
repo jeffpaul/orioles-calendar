@@ -89,5 +89,39 @@ class PlayerGames(unittest.TestCase):
                          [("cycle", "A hits for the cycle"), ("three_homer_game", "B hits three home runs")])
 
 
+def season_of(mgrs, season, start=1):
+    """One game a day for each manager id in order; even days are wins."""
+    return [game(gid=f"g{season}{i:03}", date=f"{season}-05-{i:02}" if i < 32 else f"{season}-06-{i - 31:02}",
+                 season=season, mgr=m, rs=1 if i % 2 == 0 else 0, ra=0 if i % 2 == 0 else 1)
+            for i, m in enumerate(mgrs, start)]
+
+
+class Managers(unittest.TestCase):
+    def test_fill_in_does_not_break_a_stint(self):
+        games = season_of(["a"] * 10 + ["b"] * 2 + ["a"] * 10, 1980)
+        stints = derive.manager_stints(games)
+        self.assertEqual([(s["mgr"], len(s["games"]), s["fill_in"]) for s in stints],
+                         [("a", 22, False), ("b", 2, True)])
+        # The fill-in's games count toward the regular manager's record.
+        self.assertEqual(derive.manager_records(games), {"a": {"y": [1980], "g": 22, "w": 11, "l": 11}})
+
+    def test_firing_and_a_later_return_are_separate_stints(self):
+        games = season_of(["a"] * 30 + ["b"] * 25, 1982) + season_of(["c"] * 5, 1984) + season_of(["a"] * 5, 1985)
+        ev = derive.manager_events(games, lambda pid: pid.upper(), [10])
+        got = sorted((e["d"], e["t"], e["title"]) for e in ev)
+        self.assertIn(("1982-05-31", "mgr_first", "B manages his first game for the Orioles"), got)
+        self.assertIn(("1982-05-30", "mgr_stint_end", "A's first stint as Orioles manager ends"), got)
+        self.assertIn(("1985-05-01", "mgr_return", "A returns to manage the Orioles"), got)
+        self.assertIn(("1982-05-20", "mgr_milestone", "A earns his 10th win as Orioles manager"), got)
+        # A is still managing at the last game, so his current stint has no end.
+        self.assertFalse(any(t in ("mgr_last", "mgr_stint_end") and d.startswith("1985") for d, t, _ in got))
+
+    def test_records_split_regular_season_and_postseason(self):
+        games = season_of(["a"] * 4, 1983) + [game(gid="ws", date="1983-10-16", season=1983, mgr="a", rs=5,
+                                                    ra=0, type="worldseries")]
+        self.assertEqual(derive.manager_records(games),
+                         {"a": {"y": [1983], "g": 4, "w": 2, "l": 2, "pw": 1, "pl": 0}})
+
+
 if __name__ == "__main__":
     unittest.main()
