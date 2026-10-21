@@ -47,6 +47,8 @@
   const yearsAgo = n => n === 0 ? "This year" : n === 1 ? "1 year ago" : `${n} years ago`;
   const span = years => years[0] === years.at(-1) ? String(years[0]) : `${years[0]}–${years.at(-1)}`;
   const eraOf = year => year < 1902 ? "Brewers" : year < ORIOLES_FIRST ? "Browns" : "";
+  const ERAS = ["Brewers", "Browns", "Orioles"];
+  const eraName = year => eraOf(year) || "Orioles";
   const eraTag = year => eraOf(year) ? `<span class="era">${eraOf(year)}</span>` : "";
   const playerUrl = p => p.bbref
     ? `https://www.baseball-reference.com/players/${p.bbref[0]}/${p.bbref}.shtml`
@@ -57,7 +59,8 @@
   let playerById = new Map(), byDay = new Map(), eventsByPlayer = new Map(), searchIndex = [];
   const now = new Date();
   const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-  const show = { s: true, m: true, g: true, d: true, b: true, a: true, x: false, early: true };
+  const show = { s: true, m: true, g: true, d: true, b: true, a: true, x: false };
+  const eras = new Set(ERAS);  // franchise eras to show, all by default
   let view = { year: now.getFullYear(), month: now.getMonth() };
   let selected = { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
   let focusPlayer = null;
@@ -102,12 +105,17 @@
     searchIndex.norm = norm;
   }
 
-  // Is an item inside the selected era range?
+  // Is an item inside the selected eras? Birthdays and deaths belong to every
+  // era the player played in; everything else to the era it happened in.
+  const allEras = () => eras.size === ERAS.length;
+  const playedIn = p => p.y.some(y => eras.has(eraName(y)));
   function inEra(item) {
-    if (show.early) return true;
-    if (item.kind === "b" || item.kind === "x") return item.player.y.at(-1) >= ORIOLES_FIRST;
-    return item.year >= ORIOLES_FIRST;
+    if (allEras()) return true;
+    if (item.kind === "b" || item.kind === "x") return playedIn(item.player);
+    return eras.has(eraName(item.year));
   }
+  // " in Browns and Orioles years", for sentences that count only some eras.
+  const eraNote = () => allEras() ? "" : ` in ${ERAS.filter(e => eras.has(e)).join(" and ")} years`;
 
   function itemsOn(year, month, day) {
     const key = `${pad(month + 1)}-${pad(day)}`;
@@ -149,7 +157,7 @@
     const r = { w: 0, l: 0, t: 0, pw: 0, pl: 0 };
     for (const [y, w, l, t, pw, pl] of records[`${pad(month + 1)}-${pad(day)}`] || []) {
       if (y > year) break;
-      if (!show.early && y < ORIOLES_FIRST) continue;
+      if (!eras.has(eraName(y))) continue;
       r.w += w; r.l += l; r.t += t; r.pw += pw; r.pl += pl;
     }
     r.games = r.w + r.l + r.t + r.pw + r.pl;
@@ -203,7 +211,7 @@
 
   const SCHEDULE_TYPES = { S: "Spring training", R: "Regular season", F: "Wild Card Series",
                            D: "Division Series", L: "ALCS", W: "World Series" };
-  const gamesOn = (year, month, day) => show.s ? schedule.get(`${year}-${pad(month + 1)}-${pad(day)}`) || [] : [];
+  const gamesOn = (year, month, day) => show.s && eras.has("Orioles") ? schedule.get(`${year}-${pad(month + 1)}-${pad(day)}`) || [] : [];
   const gameResult = g => {
     const [us, them] = g.score;
     return `${us > them ? "W" : us < them ? "L" : "T"} ${us}–${them}`;
@@ -355,16 +363,18 @@
       </li>`).join("")}</ul>`;
     }
     const r = recordOn(year, month, day);
-    if (!r.games) {
-      html += `<p class="record meta">The franchise has never played on ${MONTHS[month]} ${day}${show.early ? "" : " since 1954"}.</p>`;
+    if (!eras.size) {
+      // No eras chosen: the empty-state line below says so.
+    } else if (!r.games) {
+      html += `<p class="record meta">The franchise has never played on ${MONTHS[month]} ${day}${eraNote()}.</p>`;
     } else {
       const parts = [];
       if (r.w + r.l + r.t) parts.push(`<strong>${wl(r.w, r.l, r.t)}</strong> (${pct(r.w, r.l)}) in the regular season`);
       if (r.pw + r.pl) parts.push(`<strong>${wl(r.pw, r.pl)}</strong> in the postseason`);
-      html += `<p class="record">All-time on ${MONTHS[month]} ${day}${show.early ? "" : " since 1954"}: ${parts.join(" · ")}</p>`;
+      html += `<p class="record">All-time on ${MONTHS[month]} ${day}${eraNote()}: ${parts.join(" · ")}</p>`;
     }
     if (!items.length) {
-      html += `<p class="empty">${KINDS.some(k => show[k]) ? "Nothing on this day with the current filters." : "All filters are off."}</p>`;
+      html += `<p class="empty">${KINDS.some(k => show[k]) && eras.size ? "Nothing on this day with the current filters." : eras.size ? "All filters are off." : "No franchise eras are selected below the calendar."}</p>`;
     }
     for (const k of KINDS) {
       const list = items.filter(i => i.kind === k);
@@ -439,7 +449,7 @@
     const when = top.year === year ? fmtDate(top.date) : `${yearsAgo(year - top.year)} · ${top.year}`;
     const also = rest.slice(0, 2).map(i => esc(i.group ? groupTitle(i) : i.event ? i.event.title : i.player.n));
     story.innerHTML = `
-      <p class="story-kicker"><span class="swatch ${top.kind}"></span>${heading} · ${when}${eraOf(top.year) ? ` · ${eraOf(top.year)}` : ""}</p>
+      <p class="story-kicker"><span class="swatch ${top.kind}"></span>${heading} · ${when}${eraOf(top.year) && top.kind !== "b" && top.kind !== "x" ? ` · ${eraOf(top.year)}` : ""}</p>
       <p class="story-title">${esc(title)}</p>
       ${detail ? `<p class="meta">${esc(detail)}${link ? ` · <a href="${link}" target="_blank" rel="noopener">box score</a>` : ""}</p>` : ""}
       ${also.length ? `<p class="meta story-also">Also: ${also.join(" · ")}${rest.length > 2 ? ` · and ${rest.length - 2} more` : ""}</p>` : ""}
@@ -488,10 +498,12 @@
   monthSel.onchange = () => goTo(view.year, +monthSel.value, 1);
   yearInput.onchange = () => { const y = parseInt(yearInput.value, 10); if (y) goTo(y, view.month, selected.day); };
   for (const k of ["s", ...KINDS]) $(`show-${k}`).onchange = e => { show[k] = e.target.checked; render(); };
-  $("show-early").onchange = e => {
-    show.early = e.target.checked;
-    try { localStorage.setItem("oc-early", show.early ? "1" : "0"); } catch {}
+  const eraBoxes = [...$("eras").querySelectorAll("input")];
+  $("eras").onchange = e => {
+    if (e.target.checked) eras.add(e.target.value); else eras.delete(e.target.value);
+    try { localStorage.setItem("oc-eras", [...eras].join(",")); } catch {}
     render();
+    if (!results.hidden) showResults();
   };
   window.addEventListener("hashchange", () => { readHash(); render(); });
 
@@ -510,14 +522,17 @@
   function showResults() {
     const q = searchIndex.norm(search.value.trim());
     if (q.length < 2) { closeResults(); return; }
-    matches = searchIndex
-      .filter(([n]) => n.includes(q))
+    const found = searchIndex.filter(([n]) => n.includes(q));
+    const inView = found.filter(([, p]) => playedIn(p));
+    matches = inView
       .sort((x, y) => (y[0].startsWith(q) - x[0].startsWith(q)) || y[1].g - x[1].g)
       .slice(0, 12).map(([, p]) => p);
     active = -1;
-    results.innerHTML = matches.length
+    const hidden = found.length - inView.length;
+    results.innerHTML = (matches.length
       ? matches.map((p, i) => `<li role="option"><button data-i="${i}">${esc(p.n)} <small>${eraOf(p.y[0]) ? eraOf(p.y[0]) + " · " : ""}${span(p.y)}</small></button></li>`).join("")
-      : `<li class="empty" style="padding:6px 8px">No players found</li>`;
+      : `<li class="empty" style="padding:6px 8px">No players found</li>`) +
+      (hidden ? `<li class="empty" style="padding:6px 8px">${hidden} more from eras that are turned off below the calendar</li>` : "");
     results.hidden = false;
     search.setAttribute("aria-expanded", "true");
   }
@@ -572,7 +587,15 @@
       if (!schedule.has(g.d)) schedule.set(g.d, []);
       schedule.get(g.d).push(g);
     }
-    try { if (localStorage.getItem("oc-early") === "0") { show.early = false; $("show-early").checked = false; } } catch {}
+    // Restore the chosen eras; "oc-early" is the old Browns & Brewers on/off switch.
+    try {
+      const saved = localStorage.getItem("oc-eras");
+      const picked = saved != null ? saved.split(",").filter(e => ERAS.includes(e))
+        : localStorage.getItem("oc-early") === "0" ? ["Orioles"] : ERAS;
+      eras.clear();
+      picked.forEach(e => eras.add(e));
+    } catch {}
+    eraBoxes.forEach(b => { b.checked = eras.has(b.value); });
     buildIndex();
     const withAcq = players.filter(p => (p.a || []).length).length;
     $("summary").textContent = `${players.length.toLocaleString()} players · ${withAcq.toLocaleString()} with acquisition dates · ` +
