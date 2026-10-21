@@ -51,3 +51,19 @@ def run(players, events, records, games, meta):
     if missing:
         problems.append(f"no games for seasons {missing[:10]}")
     return problems
+
+
+SCHEDULE_FIELDS = {"d", "t", "home", "opp", "abbr", "time", "venue", "status", "pk"}
+
+
+def schedule(games):
+    """The upcoming season's schedule: full dates, every field, no duplicates."""
+    problems = []
+    for g in games:
+        if not FULL_DATE.match(g.get("d", "")) or not SCHEDULE_FIELDS <= g.keys():
+            problems.append(f"malformed schedule entry: {g}")
+            break
+    dupes = [pk for pk, n in Counter(g["pk"] for g in games).items() if n > 1]
+    if dupes:
+        problems.append(f"schedule lists games more than once: {dupes[:5]}")
+    return problems

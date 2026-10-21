@@ -10,7 +10,7 @@ from . import config
 
 # Mirrors TYPE_SCORE and score() in site/app.js; keep the two in step.
 TYPE_SCORE = {
-    "callout": 100, "world_series": 95, "pennant": 90, "division_title": 85, "perfect_game": 85, "no_hitter": 75,
+    "world_series": 95, "pennant": 90, "division_title": 85, "perfect_game": 85, "callout": 80, "no_hitter": 75,
     "four_homer_game": 75, "career_milestone": 70, "series_win": 65, "cycle": 60, "ballpark_first": 55,
     "ballpark_last": 50, "three_homer_game": 45, "strikeout_game": 45, "long_game": 40, "triple_play": 40,
     "big_win": 35, "walk_off": 30, "inside_the_park_hr": 28,
@@ -40,8 +40,9 @@ def birthday_score(p):
     return 8 + min(45, _war(p) * 1.5) + (15 if p.get("hof") else 0)
 
 
-def day_items(players, events, first_year=1901):
-    """{"MM-DD": [(score, year, text), ...]} best first, Feb 29 folded into Feb 28."""
+def day_items(players, events, first_year=1901, fold_leap=True):
+    """{"MM-DD": [(score, year, text), ...]} best first, Feb 29 folded into Feb 28
+    unless fold_leap is False."""
     by_id = {p["id"]: p for p in players}
     days = defaultdict(list)
 
@@ -49,7 +50,7 @@ def day_items(players, events, first_year=1901):
         year = int(date[:4])
         if (era_year or year) < first_year:
             return
-        key = "02-28" if date[5:] == "02-29" else date[5:]
+        key = "02-28" if fold_leap and date[5:] == "02-29" else date[5:]
         days[key].append((score, year, text))
 
     for e in events:

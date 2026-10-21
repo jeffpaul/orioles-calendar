@@ -13,6 +13,7 @@
     <div>
       <h1>Orioles Calendar</h1>
       <p class="sub" id="summary">Loading franchise history…</p>
+      <p class="sub" id="next-game"></p>
     </div>
     <div class="search">
       <label for="search" class="sub">Find a player</label>
@@ -33,6 +34,7 @@
     </div>
   </div>
   <div class="filters" role="group" aria-label="What to show">
+    <label><input type="checkbox" id="show-s" checked><span class="swatch s"></span>Schedule</label>
     <label><input type="checkbox" id="show-m" checked><span class="swatch m"></span>Milestones</label>
     <label><input type="checkbox" id="show-g" checked><span class="swatch g"></span>Games</label>
     <label><input type="checkbox" id="show-d" checked><span class="swatch d"></span>Debuts &amp; final games</label>
@@ -64,6 +66,8 @@
       Games are walk-off wins, inside-the-park home runs, triple plays, games of 18+ innings, wins by 15+ runs,
       three-homer and 15-strikeout games, and ballpark firsts and lasts. Walk-off hitters and inside-the-park
       homers come from play-by-play, which Retrosheet doesn't have for every early game.
+      The schedule shows the coming season's spring training and regular-season games from the MLB Stats API, in
+      Eastern time, with results once they're final.
       Feb&nbsp;29 items appear on Feb&nbsp;28 in non-leap years. All-time records count every franchise game on that
       date through the year being viewed.</p>
     <p>The information used here was obtained free of charge from and is copyrighted by Retrosheet.

@@ -15,7 +15,7 @@
   };
   // How interesting each event type is, used to pick which items a day cell shows.
   const TYPE_SCORE = {
-    callout: 100, world_series: 95, pennant: 90, division_title: 85, perfect_game: 85, no_hitter: 75,
+    world_series: 95, pennant: 90, division_title: 85, perfect_game: 85, callout: 80, no_hitter: 75,
     four_homer_game: 75, career_milestone: 70, series_win: 65, cycle: 60, ballpark_first: 55, ballpark_last: 50,
     three_homer_game: 45, strikeout_game: 45, long_game: 40, triple_play: 40, big_win: 35, walk_off: 30,
     inside_the_park_hr: 28,
@@ -53,11 +53,11 @@
     : p.mlbam ? `https://www.mlb.com/player/${p.mlbam}` : null;
   const war = p => (p.w || [null, null])[1];
 
-  let players = [], events = [], records = {}, meta = {};
+  let players = [], events = [], records = {}, meta = {}, schedule = new Map();
   let playerById = new Map(), byDay = new Map(), eventsByPlayer = new Map(), searchIndex = [];
   const now = new Date();
   const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-  const show = { m: true, g: true, d: true, b: true, a: true, x: false, early: true };
+  const show = { s: true, m: true, g: true, d: true, b: true, a: true, x: false, early: true };
   let view = { year: now.getFullYear(), month: now.getMonth() };
   let selected = { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
   let focusPlayer = null;
@@ -166,7 +166,7 @@
     const e = item.event;
     if (!e) return item.player.n;
     if (item.group) return `${item.group.length} ${e.t === "debut" ? "debuts" : "final games"}`;
-    if (e.c) return e.title.split(",")[0];
+    if (e.c) return e.chip || e.title.split(",")[0];
     const who = e.ids.map(lastName).filter(Boolean);
     const short = {
       no_hitter: "No-hitter", perfect_game: "Perfect game", cycle: "Cycle", four_homer_game: "4 HR game",
@@ -199,6 +199,26 @@
     return url ? `<a href="${url}" target="_blank" rel="noopener">${esc(p.n)}</a>` : esc(p.n);
   };
 
+  // Schedule ------------------------------------------------------------------
+
+  const SCHEDULE_TYPES = { S: "Spring training", R: "Regular season", F: "Wild Card Series",
+                           D: "Division Series", L: "ALCS", W: "World Series" };
+  const gamesOn = (year, month, day) => show.s ? schedule.get(`${year}-${pad(month + 1)}-${pad(day)}`) || [] : [];
+  const gameResult = g => {
+    const [us, them] = g.score;
+    return `${us > them ? "W" : us < them ? "L" : "T"} ${us}–${them}`;
+  };
+  const gameChip = g => `${g.home ? "vs" : "@"} ${g.abbr || g.opp}` +
+    (g.score ? ` ${gameResult(g)}` : g.status !== "Scheduled" ? ` (${g.status.toLowerCase()})` : g.time ? ` ${g.time.replace(":00", "").replace(" PM", "p").replace(" AM", "a")}` : "");
+  const gameText = g => {
+    const when = g.score ? gameResult(g) : g.status !== "Scheduled" ? g.status
+      : g.time ? `${g.time} ET` : "Time to be announced";
+    return `${g.home ? "vs" : "at"} ${g.opp} · ${when}`;
+  };
+  const gameMeta = g => [SCHEDULE_TYPES[g.t] || "", g.split ? "split squad" : "", g.venue, g.note && !g.note.startsWith("at ") ? g.note : ""]
+    .filter(Boolean).join(" · ");
+  const gameLink = g => `https://www.mlb.com/gameday/${g.pk}`;
+
   // Rendering -------------------------------------------------------------------
 
   const grid = $("grid"), panel = $("panel"), title = $("title");
@@ -208,7 +228,7 @@
   // Shade a day by its best game or milestone: 0 nothing shown, 1 only
   // people (birthdays, debuts, trades), 2 a memorable game, 3 a milestone,
   // 4 a title, no-hitter or hand-picked moment.
-  const HEAT_STEPS = [28, 60, 85];
+  const HEAT_STEPS = [28, 60, 75];
   const heatLevel = items => {
     if (!items.length) return 0;
     const best = Math.max(0, ...items.filter(i => i.kind === "m" || i.kind === "g").map(i => i.score));
@@ -227,13 +247,17 @@
       const items = itemsOn(view.year, view.month, d);
       const counts = KINDS.map(k => [k, items.filter(i => i.kind === k).length]).filter(([, n]) => n);
       const cls = ["day", `heat-${heatLevel(items)}`];
+      if (gamesOn(view.year, view.month, d).length) cls.push("game");
       if (`${view.year}-${view.month}-${d}` === todayKey) cls.push("today");
       if (selected.year === view.year && selected.month === view.month && selected.day === d) cls.push("selected");
-      const chips = items.slice(0, 3).map(i => `<span class="chip ${i.kind}">${esc(chipLabel(i))}</span>`).join("");
-      const more = items.length > 3 ? `<span class="more">+${items.length - 3} more</span>` : "";
+      const sched = gamesOn(view.year, view.month, d);
+      const room = sched.length ? 2 : 3;
+      const chips = sched.map(g => `<span class="chip s">${esc(gameChip(g))}</span>`).join("") +
+        items.slice(0, room).map(i => `<span class="chip ${i.kind}">${esc(chipLabel(i))}</span>`).join("");
+      const more = items.length > room ? `<span class="more">+${items.length - room} more</span>` : "";
       const rec = recordOn(view.year, view.month, d);
       const recShort = rec.w + rec.l + rec.t ? wl(rec.w, rec.l, rec.t) : "";
-      const label = `${MONTHS[view.month]} ${d}: ${recShort ? `all-time record ${recShort}, ` : ""}` +
+      const label = `${MONTHS[view.month]} ${d}: ${sched.map(g => `Orioles ${gameText(g)}, `).join("")}${recShort ? `all-time record ${recShort}, ` : ""}` +
         counts.map(([k, n]) => `${n} ${KIND_HEADINGS[k].toLowerCase()}`).join(", ");
       parts.push(
         `<button class="${cls.join(" ")}" data-day="${d}" aria-label="${esc(label)}">
@@ -300,11 +324,36 @@
     </div><hr>`;
   }
 
+  // Each date has a page with a link preview image (built by pipeline/cards.py)
+  // that forwards to this calendar, so a shared link shows the day's best story.
+  const shareUrl = (month, day) => new URL(`day/${pad(month + 1)}-${pad(day)}.html`, location.href).href.replace(/#.*$/, "");
+  const shareButton = (month, day) => `<button class="linkish share" data-share="${shareUrl(month, day)}">Share this day</button>`;
+
+  async function share(url, btn) {
+    const title = `${MONTHS[selected.month]} ${selected.day} in Orioles history`;
+    try {
+      if (navigator.share) { await navigator.share({ title, url }); return; }
+      await navigator.clipboard.writeText(url);
+      btn.textContent = "Link copied";
+    } catch (err) {
+      if (err.name === "AbortError") return;
+      btn.outerHTML = `<input class="share-url" readonly value="${esc(url)}" aria-label="Link to this day">`;
+      panel.querySelector(".share-url")?.select();
+    }
+  }
+
   function renderPanel() {
     const { year, month, day } = selected;
     const items = itemsOn(year, month, day);
     let html = focusPlayer ? playerCard(focusPlayer) : "";
-    html += `<h3>${MONTHS[month]} ${day}, ${year}</h3>`;
+    html += `<div class="panel-head"><h3>${MONTHS[month]} ${day}, ${year}</h3>${shareButton(month, day)}</div>`;
+    const sched = gamesOn(year, month, day);
+    if (sched.length) {
+      html += `<h4><span class="swatch s"></span>On the schedule</h4><ul>${sched.map(g => `<li>
+        <div>${esc(gameText(g))}</div>
+        <div class="meta">${esc(gameMeta(g))} · <a href="${gameLink(g)}" target="_blank" rel="noopener">${g.score ? "box score" : "Gameday"}</a></div>
+      </li>`).join("")}</ul>`;
+    }
     const r = recordOn(year, month, day);
     if (!r.games) {
       html += `<p class="record meta">The franchise has never played on ${MONTHS[month]} ${day}${show.early ? "" : " since 1954"}.</p>`;
@@ -363,9 +412,12 @@
     const items = itemsOn(year, month, day);
     const story = $("story");
     const isToday = `${year}-${month}-${day}` === todayKey;
+    const sched = gamesOn(year, month, day);
+    const gameLine = sched.length ? `<p class="meta story-game"><span class="swatch s"></span>${isToday ? "Today" : "This day"}: ` +
+      `${esc(SCHEDULE_TYPES[sched[0].t])}, ${sched.map(g => esc(gameText(g))).join(" and ")}</p>` : "";
     const heading = isToday ? "Today in franchise history" : `On ${MONTHS[month]} ${day}`;
     if (!items.length) {
-      story.innerHTML = `<p class="story-kicker">${heading}</p><p class="story-title">Nothing on this day with the current filters.</p>`;
+      story.innerHTML = `<p class="story-kicker">${heading}</p><p class="story-title">Nothing on this day with the current filters.</p>${gameLine}`;
       return;
     }
     const [top, ...rest] = items;
@@ -390,7 +442,8 @@
       <p class="story-kicker"><span class="swatch ${top.kind}"></span>${heading} · ${when}${eraOf(top.year) ? ` · ${eraOf(top.year)}` : ""}</p>
       <p class="story-title">${esc(title)}</p>
       ${detail ? `<p class="meta">${esc(detail)}${link ? ` · <a href="${link}" target="_blank" rel="noopener">box score</a>` : ""}</p>` : ""}
-      ${also.length ? `<p class="meta story-also">Also: ${also.join(" · ")}${rest.length > 2 ? ` · and ${rest.length - 2} more` : ""}</p>` : ""}`;
+      ${also.length ? `<p class="meta story-also">Also: ${also.join(" · ")}${rest.length > 2 ? ` · and ${rest.length - 2} more` : ""}</p>` : ""}
+      ${gameLine}`;
   }
 
   function render() { renderStory(); renderGrid(); renderPanel(); writeHash(); }
@@ -424,6 +477,8 @@
     grid.querySelector(`.day[data-day="${d.getDate()}"]`)?.focus();
   });
   panel.addEventListener("click", e => {
+    const shareBtn = e.target.closest("[data-share]");
+    if (shareBtn) { share(shareBtn.dataset.share, shareBtn); return; }
     const btn = e.target.closest("[data-goto]");
     if (btn) goToAnniversary(btn.dataset.goto);
   });
@@ -432,7 +487,7 @@
   $("today").onclick = () => { focusPlayer = null; goTo(now.getFullYear(), now.getMonth(), now.getDate()); };
   monthSel.onchange = () => goTo(view.year, +monthSel.value, 1);
   yearInput.onchange = () => { const y = parseInt(yearInput.value, 10); if (y) goTo(y, view.month, selected.day); };
-  for (const k of KINDS) $(`show-${k}`).onchange = e => { show[k] = e.target.checked; render(); };
+  for (const k of ["s", ...KINDS]) $(`show-${k}`).onchange = e => { show[k] = e.target.checked; render(); };
   $("show-early").onchange = e => {
     show.early = e.target.checked;
     try { localStorage.setItem("oc-early", show.early ? "1" : "0"); } catch {}
@@ -487,6 +542,20 @@
   });
   document.addEventListener("click", e => { if (!e.target.closest(".search")) closeResults(); });
 
+  // A link to the next scheduled game, so the coming season is easy to find.
+  function showNextGame() {
+    const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const next = [...schedule.values()].flat().filter(g => g.d >= today && !g.score).sort((x, y) => x.d.localeCompare(y.d))[0];
+    if (!next) return;
+    const el = $("next-game");
+    el.innerHTML = `Next game: <button class="linkish" data-day="${next.d}">${fmtDate(next.d)}, ${esc(gameText(next))}</button> · ${esc(SCHEDULE_TYPES[next.t])}`;
+    el.querySelector("button").onclick = () => {
+      const [y, m, d] = next.d.split("-").map(Number);
+      focusPlayer = null;
+      goTo(y, m - 1, d);
+    };
+  }
+
   // Boot -----------------------------------------------------------------------------
 
   async function load(name) {
@@ -495,8 +564,14 @@
     return res.json();
   }
 
-  Promise.all(["players", "events", "records", "meta"].map(load)).then(([p, e, r, m]) => {
+  // The schedule is optional: builds without the Stats API don't write it.
+  const loadSchedule = () => load("schedule").catch(() => []);
+  Promise.all([...["players", "events", "records", "meta"].map(load), loadSchedule()]).then(([p, e, r, m, sc]) => {
     players = p; events = e; records = r; meta = m;
+    for (const g of sc) {
+      if (!schedule.has(g.d)) schedule.set(g.d, []);
+      schedule.get(g.d).push(g);
+    }
     try { if (localStorage.getItem("oc-early") === "0") { show.early = false; $("show-early").checked = false; } } catch {}
     buildIndex();
     const withAcq = players.filter(p => (p.a || []).length).length;
@@ -509,6 +584,7 @@
       const a = $(id);
       a.href = new URL(a.getAttribute("href"), location.href).href.replace(/^https?:/, "webcal:");
     }
+    showNextGame();
     readHash();
     render();
   }).catch(err => {

@@ -220,8 +220,12 @@ def main(argv=None):
         present = all((pid, c["d"]) in appeared_on for pid in c["ids"])
         if (c.get("check") == "appeared") != present:
             raise SystemExit(f"callout check failed: {c['title']}")
-        g = first_game_on.get(c["d"])
-        ev = {"d": c["d"], "t": "callout", "title": c["title"], "ids": c["ids"], "c": 1}
+        # The player's own game, for doubleheaders like Gaedel's.
+        gid = next((gid for pid in c["ids"] for d, gid in apps.get(pid, []) if d == c["d"]), None)
+        g = game_by_gid[gid] if gid else first_game_on.get(c["d"])
+        if not g:
+            raise SystemExit(f"callout has no franchise game on {c['d']}: {c['title']}")
+        ev = {"d": c["d"], "t": "callout", "title": c["title"], "chip": c["chip"], "ids": c["ids"], "c": 1}
         if g:
             ev.update({"detail": derive.score_text(g), "gid": g["gid"], "link": g["link"]})
         events.append(ev)
@@ -237,7 +241,8 @@ def main(argv=None):
         "statsapi_seasons": sorted({g["season"] for g in games if g["src"] == "statsapi"}),
         "counts": {"players": len(players), "events": len(events), "games": len(games)},
     }
-    problems = checks.run(players, events, recs, games, meta)
+    sched = None if args.no_api else statsapi.schedule(today)
+    problems = checks.run(players, events, recs, games, meta) + checks.schedule(sched or [])
     if problems:
         for p in problems:
             log("CHECK FAILED:", p)
@@ -249,6 +254,8 @@ def main(argv=None):
     write(OUT / "events.json", events)
     write(OUT / "records.json", recs)
     write(OUT / "meta.json", meta, indent=1)
+    if sched is not None:  # --no-api keeps the last schedule
+        write(OUT / "schedule.json", sched)
     stamp = meta["last_game"].replace("-", "") + "T000000Z"
     for filename, name, first_year in (("calendar.ics", "Orioles Calendar", 1901),
                                        ("calendar-orioles.ics", "Orioles Calendar (1954 on)", 1954)):
