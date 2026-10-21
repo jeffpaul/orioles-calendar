@@ -134,6 +134,8 @@ def page(key, items, rows):
 <meta property="og:image:height" content="{HEIGHT}">
 <meta property="og:image:alt" content="{e(title)}: {e(desc)}">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="canonical" href="{site}#{key}">
 <meta http-equiv="refresh" content="0; url={target}">
 <script>location.replace("{target}")</script>
