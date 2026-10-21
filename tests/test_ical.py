@@ -44,6 +44,28 @@ class Feed(unittest.TestCase):
         self.assertIn("Orioles acquire Cal Ripken Jr. in the amateur draft", text.replace("\r\n ", ""))
 
 
+class Managers(unittest.TestCase):
+    PEOPLE = [
+        {"id": "weave801", "n": "Earl Weaver", "b": "1930-08-14", "x": "2013-01-19", "y": [], "g": 0, "a": [],
+         "hof": True, "m": {"y": [1968, 1986], "g": 2541, "w": 1480, "l": 1060}},
+        {"id": "fill801", "n": "Short Interim", "b": "1950-03-03", "y": [], "g": 0, "a": [],
+         "m": {"y": [1985], "g": 1, "w": 1, "l": 0}},
+    ]
+    EVENTS = [
+        {"d": "1968-07-11", "t": "mgr_first", "title": "Earl Weaver manages his first game for the Orioles",
+         "ids": ["weave801"], "n": 2289},
+        {"d": "1985-06-13", "t": "mgr_first", "title": "Short Interim manages his first game for the Orioles",
+         "ids": ["fill801"], "n": 1},
+    ]
+
+    def test_long_tenures_birthdays_and_deaths_are_in_interim_spells_are_not(self):
+        text = ical.feed(self.PEOPLE, self.EVENTS, "https://example.org/", "20260925T000000Z", "Test").replace("\r\n ", "")
+        self.assertIn("Earl Weaver manages his first game for the Orioles", text)
+        self.assertIn("Earl Weaver is born", text)
+        self.assertIn("Earl Weaver dies", text)
+        self.assertNotIn("Short Interim", text)
+
+
 class Fold(unittest.TestCase):
     def test_never_splits_a_multibyte_character(self):
         line = "SUMMARY:" + "Miñoso " * 20

@@ -48,7 +48,7 @@ def season_games(season, ids, team_names):
                 "tp": 0, "p_h": them_team["teamStats"]["batting"].get("hits", 0),
                 "p_bfp": us_team["teamStats"]["pitching"].get("battersFaced", 0),
                 "p_outs": us_team["teamStats"]["pitching"].get("outs", 0),
-                "link": f"https://www.mlb.com/gameday/{pk}", "src": "statsapi",
+                "link": f"https://www.mlb.com/gameday/{pk}", "src": "statsapi", "mgr": manager_on(date, ids),
             })
             for key, p in us_team["players"].items():
                 pid = ids(p["person"]["id"])
@@ -83,6 +83,26 @@ def season_games(season, ids, team_names):
                             "walk": "walk", "intent_walk": "walk", "sac_fly": "sacrifice fly"}.get(res.get("eventType"), "other")
                     walkoffs[gid] = (batter, kind)
     return games, bats, pits, apps, walkoffs, itp, positions
+
+
+MANAGER_JOBS = {"MNGR", "NTRM"}  # manager, interim manager
+
+
+def manager_on(date, ids):
+    """The franchise's manager on a date, from the coaching staff listed that day."""
+    data = sources.statsapi(f"/teams/{config.MLB_TEAM_ID}/coaches", name=f"statsapi/coaches_{date}",
+                            max_age_hours=FINAL_AGE, season=date[:4], date=date)
+    staff = [c for c in data.get("roster", []) if c.get("jobId") in MANAGER_JOBS]
+    staff.sort(key=lambda c: c["jobId"] != "NTRM")  # an interim manager is the one in the dugout
+    return ids(staff[0]["person"]["id"]) if staff else None
+
+
+def hall_of_fame():
+    """Every Hall of Fame member's class year, as ({mlbam: year}, {name: year})."""
+    data = sources.statsapi("/awards/MLBHOF/recipients", name="statsapi/hall_of_fame", max_age_hours=24 * 7)
+    members = [a for a in data.get("awards", []) if a.get("player")]
+    return ({a["player"]["id"]: int(a["season"]) for a in members},
+            {a["player"].get("nameFirstLast"): int(a["season"]) for a in members})
 
 
 def team_names(season):

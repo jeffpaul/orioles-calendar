@@ -16,7 +16,7 @@
       <p class="sub" id="next-game"></p>
     </div>
     <div class="search">
-      <label for="search" class="sub">Find a player</label>
+      <label for="search" class="sub">Find a player or manager</label>
       <input id="search" type="search" placeholder="e.g. Brooks Robinson" autocomplete="off"
              role="combobox" aria-expanded="false" aria-controls="results">
       <ul class="results" id="results" role="listbox" hidden></ul>
@@ -40,7 +40,7 @@
     <label><input type="checkbox" id="show-d" checked><span class="swatch d"></span>Debuts &amp; final games</label>
     <label><input type="checkbox" id="show-b" checked><span class="swatch b"></span>Birthdays</label>
     <label><input type="checkbox" id="show-a" checked><span class="swatch a"></span>Acquisitions</label>
-    <label><input type="checkbox" id="show-x"><span class="swatch x"></span>Deaths</label>
+    <label><input type="checkbox" id="show-x" checked><span class="swatch x"></span>Deaths</label>
     <label class="era-toggle"><input type="checkbox" id="show-early" checked>Include Browns &amp; Brewers years (1901–1953)</label>
   </div>
 
@@ -58,11 +58,14 @@
   <footer id="footer">
     <p>The franchise began as the Milwaukee Brewers (1901), became the St. Louis Browns (1902–1953)
       and moved to Baltimore in 1954. Items from before 1954 carry an era tag.</p>
-    <p>Data: Retrosheet (games, play-by-play, biographies and transactions through the last season it has published),
-      the MLB Stats API (the current season and recent transactions), Baseball-Reference (WAR) and the Chadwick
-      Baseball Bureau register (player IDs). Built by the scripts in <code>pipeline/</code>.</p>
+    <p>Data: Retrosheet (games, managers, play-by-play, biographies and transactions through the last season it has
+      published), the MLB Stats API (the current season, recent transactions and Hall of Fame classes),
+      Baseball-Reference (WAR) and the Chadwick Baseball Bureau register (player IDs). Built by the scripts in <code>pipeline/</code>.</p>
     <p>Milestones are no-hitters, perfect games, cycles, four-homer games, round-number career totals reached in
-      a franchise uniform, division and pennant clinches, postseason series wins and hand-picked moments.
+      a franchise uniform, a manager's 500th, 1,000th and 1,500th franchise wins, Hall of Fame inductions, division
+      and pennant clinches, postseason series wins and hand-picked moments. Debuts and final games include each
+      manager's first and last games in charge; games a coach ran for a few days while the manager was ejected,
+      suspended or away count for the manager, as in the official records.
       Games are walk-off wins, inside-the-park home runs, triple plays, games of 18+ innings, wins by 15+ runs,
       three-homer and 15-strikeout games, and ballpark firsts and lasts. Walk-off hitters and inside-the-park
       homers come from play-by-play, which Retrosheet doesn't have for every early game.

@@ -221,6 +221,111 @@ def career_crossings(lines, baseline, stat, thresholds):
     return out
 
 
+FILL_IN_GAMES = 20  # a shorter spell inside another manager's season is a fill-in
+STINT_WORDS = ["first", "second", "third", "fourth"]
+
+
+def manager_stints(games):
+    """Runs of consecutive franchise games under one manager, oldest first:
+    [{"mgr": pid, "games": [...], "fill_in": bool}]. When a manager hands the
+    team to someone for fewer than FILL_IN_GAMES games and takes it back the
+    same season (an ejection, a suspension, a sick day), his stint carries on
+    and includes those games, the way official records credit them; the other
+    spell is kept as a fill-in."""
+    stints = []
+    for g in sorted((g for g in games if g.get("mgr")), key=lambda g: (g["date"], g["num"])):
+        if stints and stints[-1]["mgr"] == g["mgr"]:
+            stints[-1]["games"].append(g)
+            continue
+        if (len(stints) >= 2 and stints[-2]["mgr"] == g["mgr"] and len(stints[-1]["games"]) < FILL_IN_GAMES
+                and stints[-2]["games"][-1]["season"] == g["season"]):
+            stints[-1]["fill_in"] = True
+            stints[-2]["games"] += stints[-1]["games"] + [g]
+            stints.append(stints.pop(-2))
+            continue
+        stints.append({"mgr": g["mgr"], "games": [g], "fill_in": False})
+    return sorted(stints, key=lambda s: (s["games"][0]["date"], s["games"][0]["num"]))
+
+
+def credited_games(games):
+    """[(manager, game)] in date order, fill-in games credited to the manager
+    whose stint they fall in."""
+    out = [(s["mgr"], g) for s in manager_stints(games) if not s["fill_in"] for g in s["games"]]
+    return sorted(out, key=lambda x: (x[1]["date"], x[1]["num"]))
+
+
+def manager_records(games):
+    """{pid: {"y": seasons, "g": games, "w": wins, "l": losses, "pw":, "pl":}}
+    over the franchise games credited to him, regular season and postseason apart."""
+    out = {}
+    for mgr, g in credited_games(games):
+        r = out.setdefault(mgr, {"y": set(), "g": 0, "w": 0, "l": 0, "pw": 0, "pl": 0})
+        r["y"].add(g["season"])
+        post = g["type"] in POSTSEASON
+        if not post:
+            r["g"] += 1
+        if g["rs"] != g["ra"]:
+            r[("p" if post else "") + ("w" if g["rs"] > g["ra"] else "l")] += 1
+    for r in out.values():
+        r["y"] = sorted(r["y"])
+        if not r["pw"] + r["pl"]:
+            del r["pw"], r["pl"]
+    return out
+
+
+def _wl(gs):
+    reg = [g for g in gs if g["type"] not in POSTSEASON]
+    return f"{sum(g['rs'] > g['ra'] for g in reg):,}–{sum(g['rs'] < g['ra'] for g in reg):,}"
+
+
+def manager_events(games, names, thresholds):
+    """First and last games of each managing stint (fill-ins left out) and
+    round-number franchise wins as manager. The current stint gets no end."""
+    if not games:
+        return []
+    last_gid = max(games, key=lambda g: (g["date"], g["num"]))["gid"]
+    ev = []
+
+    def event(g, t, title, detail, pid, n):
+        return {"d": g["date"], "t": t, "title": title, "detail": detail, "ids": [pid], "gid": g["gid"],
+                "link": g["link"], "opp": g["opp_name"], "score": [g["rs"], g["ra"]], "n": n}
+
+    by_mgr = defaultdict(list)
+    for s in manager_stints(games):
+        if not s["fill_in"]:
+            by_mgr[s["mgr"]].append(s)
+    for pid, stints in by_mgr.items():
+        for i, s in enumerate(stints):
+            first, last, n = s["games"][0], s["games"][-1], len(s["games"])
+            us = config.nickname(first["season"])
+            if i == 0:
+                ev.append(event(first, "mgr_first", f"{names(pid)} manages his first game for the {us}",
+                                score_text(first), pid, n))
+            else:
+                ev.append(event(first, "mgr_return", f"{names(pid)} returns to manage the {us}",
+                                score_text(first), pid, n))
+            if last["gid"] == last_gid:
+                continue
+            us = config.nickname(last["season"])
+            detail = f"{score_text(last)} · {_wl(s['games'])} in {'the stint' if len(stints) > 1 else 'his tenure'}"
+            if i == len(stints) - 1:
+                ev.append(event(last, "mgr_last", f"{names(pid)} manages his final game for the {us}", detail, pid, n))
+            else:
+                word = STINT_WORDS[i] if i < len(STINT_WORDS) else f"{i + 1}th"
+                ev.append(event(last, "mgr_stint_end", f"{names(pid)}'s {word} stint as {us} manager ends",
+                                detail, pid, n))
+    wins = defaultdict(int)
+    for mgr, g in credited_games(games):
+        if g["type"] in POSTSEASON or g["rs"] <= g["ra"]:
+            continue
+        wins[mgr] += 1
+        if wins[mgr] in thresholds:
+            n = wins[mgr]
+            ev.append(event(g, "mgr_milestone", f"{names(mgr)} earns his {n:,}th win as {config.nickname(g['season'])} manager",
+                            score_text(g), mgr, n))
+    return ev
+
+
 def records(games):
     """{"MM-DD": [[year, w, l, t, pw, pl], ...]} sorted by year."""
     acc = defaultdict(lambda: defaultdict(lambda: [0, 0, 0, 0, 0]))
