@@ -63,12 +63,15 @@ header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; j
 .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
 .swatch.m { background: var(--m); } .swatch.g { background: var(--g); } .swatch.d { background: var(--d); }
 .swatch.b { background: var(--b); } .swatch.a { background: var(--a); } .swatch.x { background: var(--x); }
+.swatch.s { background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent); }
 
 .story { display: grid; gap: 4px; margin: 0 0 16px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius); }
 .story p { margin: 0; }
 .story-kicker { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .story-title { font-size: 1.3rem; font-weight: 650; line-height: 1.25; text-wrap: balance; }
 .story-also { margin-top: 2px; }
+.story-game { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+#next-game:empty { display: none; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; align-items: start; }
 @media (max-width: 960px) { .layout { grid-template-columns: minmax(0, 1fr); } .panel { position: static; max-height: none; } }
 .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
@@ -94,11 +97,13 @@ header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; j
 .chip.m { background: var(--m-soft); color: var(--m); } .chip.g { background: var(--g-soft); color: var(--g); }
 .chip.d { background: var(--d-soft); color: var(--d); } .chip.b { background: var(--b-soft); color: var(--b); }
 .chip.a { background: var(--a-soft); color: var(--a); } .chip.x { background: var(--x-soft); color: var(--x); }
+.chip.s { background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); font-weight: 600; }
 .more { font-size: 0.72rem; color: var(--muted); }
 .rec { margin-top: auto; font-size: 0.72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) {
   .day { min-height: 54px; padding: 4px; }
   .day .chip, .day .more, .day .rec { display: none; }
+  .day.game .num > span:first-child { text-decoration: underline 3px var(--accent); text-underline-offset: 3px; }
   .counts { flex-wrap: wrap; }
 }
 
@@ -115,6 +120,8 @@ header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; j
 .meta { color: var(--muted); font-size: 0.85rem; }
 .empty { color: var(--muted); }
 .linkish { border: 0; background: none; padding: 0 2px; color: var(--a); text-decoration: underline; font-size: 0.85rem; }
+.panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; }
+.share-url { width: 100%; font-size: 0.8rem; margin-top: 4px; }
 .player-card { display: grid; gap: 6px; }
 .player-card .dates { display: grid; gap: 4px; font-size: 0.9rem; }
 .panel hr { border: 0; border-top: 1px solid var(--border); margin: 14px 0; }

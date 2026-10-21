@@ -1,5 +1,6 @@
 """MLB Stats API loaders for seasons Retrosheet hasn't published yet."""
 
+import datetime as dt
 import hashlib
 from collections import defaultdict
 
@@ -176,3 +177,41 @@ def division_results(season):
                                 str(g["teams"]["home"]["team"]["id"]), g["teams"]["away"]["score"],
                                 g["teams"]["home"]["score"]))
     return sorted(set(out)), [str(t["team"]["id"]) for t in division["teamRecords"]]
+
+
+SCHEDULE_TYPES = {"S": "Spring training", "R": "Regular season", "F": "Wild Card", "D": "Division Series",
+                  "L": "ALCS", "W": "World Series"}
+FINAL_STATES = ("Final", "Completed Early", "Game Over")
+
+
+def schedule(today):
+    """The upcoming season's games, spring training included, once MLB has
+    published them. A season drops off when its last game is final."""
+    from zoneinfo import ZoneInfo
+    eastern = ZoneInfo("America/New_York")
+    out = []
+    for season in (today.year, today.year + 1):
+        sched = sources.statsapi("/schedule", name=f"statsapi/schedule_{season}", max_age_hours=6, sportId=1,
+                                 teamId=config.MLB_TEAM_ID, season=season,
+                                 gameType=",".join(SCHEDULE_TYPES), hydrate="team,venue")
+        games = []
+        for day in sched.get("dates", []):
+            for g in day["games"]:
+                home = g["teams"]["home"]["team"]["id"] == config.MLB_TEAM_ID
+                us, them = (g["teams"]["home"], g["teams"]["away"]) if home else (g["teams"]["away"], g["teams"]["home"])
+                state = g["status"]["detailedState"]
+                start = dt.datetime.fromisoformat(g["gameDate"].replace("Z", "+00:00")).astimezone(eastern)
+                game = {"d": g["officialDate"], "t": g["gameType"], "home": home,
+                        "opp": them["team"]["name"], "abbr": them["team"].get("abbreviation", ""),
+                        "time": None if g["status"].get("startTimeTBD") else start.strftime("%I:%M %p").lstrip("0"),
+                        "venue": g["venue"]["name"], "status": state, "pk": g["gamePk"]}
+                if g.get("description"):
+                    game["note"] = g["description"]
+                if us.get("splitSquad"):
+                    game["split"] = 1
+                if state in FINAL_STATES:
+                    game["score"] = [us.get("score", 0), them.get("score", 0)]
+                games.append(game)
+        if any("score" not in g and g["status"] not in ("Cancelled", "Postponed") for g in games):
+            out += games
+    return out

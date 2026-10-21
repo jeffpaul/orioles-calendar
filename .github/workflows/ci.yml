@@ -16,7 +16,13 @@ jobs:
           path: .cache
           key: sources-${{ github.run_id }}
           restore-keys: sources-
+      - name: Install Pillow for the share cards
+        run: pip install pillow==11.3.0
       - name: Unit tests
         run: python -m unittest discover -s tests -t .
       - name: Build data and run validation checks
         run: python -m pipeline.build
+      - name: Build share cards
+        run: |
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf || sudo apt-get install -y fonts-dejavu-core
+          python -m pipeline.cards

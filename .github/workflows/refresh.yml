@@ -2,8 +2,8 @@ name: Refresh data and deploy
 
 on:
   schedule:
-    - cron: "0 11 * 3-11 *"   # daily during the season (Mar-Nov), after the night's games
-    - cron: "0 11 * 12,1,2 1" # weekly on Mondays in the off-season
+    - cron: "0 11 * 2-11 *"   # daily from spring training through the postseason (Feb-Nov)
+    - cron: "0 11 * 12,1 1"   # weekly on Mondays in the off-season
   workflow_dispatch:
   push:
     branches: [main]
@@ -47,6 +47,11 @@ jobs:
             git commit -m "Refresh calendar data ($(jq -r .last_game site/data/meta.json))"
             git push
           fi
+      - name: Build shareable day pages and cards (not committed)
+        run: |
+          pip install pillow==11.3.0
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf || sudo apt-get install -y fonts-dejavu-core
+          python -m pipeline.cards
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

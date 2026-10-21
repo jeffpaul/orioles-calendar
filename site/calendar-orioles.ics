@@ -546,13 +546,15 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000413
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Davey Johnson plays his first game for the Orioles (1965)
-DESCRIPTION:1965: Davey Johnson plays his first game for the Orioles\n1996:
-  Brady Anderson hits a walk-off home run\n2021: Ramon Urias hits a walk-of
- f single\n2023: Adley Rutschman hits a walk-off home run\n1968: Elrod Hend
- ricks plays his first game for the Orioles\n2023: Ryan O'Hearn plays his f
- irst game for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-cale
- ndar/#04-13
+SUMMARY:The Baltimore Orioles play their first game\, a 3–0 loss at Detro
+ it (1954)
+DESCRIPTION:1954: The Baltimore Orioles play their first game\, a 3–0 los
+ s at Detroit\n1965: Davey Johnson plays his first game for the Orioles\n19
+ 96: Brady Anderson hits a walk-off home run\n2021: Ramon Urias hits a walk
+ -off single\n2023: Adley Rutschman hits a walk-off home run\n1968: Elrod H
+ endricks plays his first game for the Orioles\n2023: Ryan O'Hearn plays hi
+ s first game for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-c
+ alendar/#04-13
 URL:https://jeffpaul.github.io/orioles-calendar/#04-13
 END:VEVENT
 BEGIN:VEVENT
@@ -759,14 +761,17 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000429
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Luis Aparicio is born (1934)
-DESCRIPTION:1934: Luis Aparicio is born\n1970: Paul Blair hits three home r
- uns\n1970: Orioles win by 16 runs\n1982: Storm Davis plays his first game 
- for the Orioles\n1990: Rene Gonzales hits a walk-off home run\n2012: Wilso
- n Betemit hits a walk-off home run\n2021: Cedric Mullins hits a walk-off s
- acrifice fly\n2022: Kyle Bradish plays his first game for the Orioles\n196
- 3: Orioles acquire Curt Blefary on waivers\n\nMore: https://jeffpaul.githu
- b.io/orioles-calendar/#04-29
+SUMMARY:The Orioles beat the White Sox 9–0 for their first win\, after an
+  0–21 start (1988)
+DESCRIPTION:1988: The Orioles beat the White Sox 9–0 for their first win\
+ , after an 0–21 start\n2015: The Orioles beat the White Sox 8–2 at Cam
+ den Yards with no fans allowed\, after unrest in Baltimore\n1934: Luis Apa
+ ricio is born\n1970: Paul Blair hits three home runs\n1970: Orioles win by
+  16 runs\n1982: Storm Davis plays his first game for the Orioles\n1990: Re
+ ne Gonzales hits a walk-off home run\n2012: Wilson Betemit hits a walk-off
+  home run\n2021: Cedric Mullins hits a walk-off sacrifice fly\n2022: Kyle 
+ Bradish plays his first game for the Orioles\n…and 1 more\n\nMore: https
+ ://jeffpaul.github.io/orioles-calendar/#04-29
 URL:https://jeffpaul.github.io/orioles-calendar/#04-29
 END:VEVENT
 BEGIN:VEVENT
@@ -881,10 +886,13 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000508
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Mike Cuellar is born (1937)
-DESCRIPTION:1937: Mike Cuellar is born\n1988: Joe Orsulak hits a walk-off s
- ingle\n1955: Willie Miranda hits an inside-the-park home run\n\nMore: http
- s://jeffpaul.github.io/orioles-calendar/#05-08
+SUMMARY:Frank Robinson hits the only home run ever to leave Memorial Stadiu
+ m entirely\, off Cleveland's Luis Tiant (1966)
+DESCRIPTION:1966: Frank Robinson hits the only home run ever to leave Memor
+ ial Stadium entirely\, off Cleveland's Luis Tiant\n1937: Mike Cuellar is b
+ orn\n1988: Joe Orsulak hits a walk-off single\n1955: Willie Miranda hits a
+ n inside-the-park home run\n\nMore: https://jeffpaul.github.io/orioles-cal
+ endar/#05-08
 URL:https://jeffpaul.github.io/orioles-calendar/#05-08
 END:VEVENT
 BEGIN:VEVENT
@@ -1175,10 +1183,13 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000530
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Bob Hale hits a walk-off single (1956)
-DESCRIPTION:1956: Bob Hale hits a walk-off single\n1956: Bob Nieman hits a 
- walk-off single\n2026: Pete Alonso hits a walk-off single\n\nMore: https:/
- /jeffpaul.github.io/orioles-calendar/#05-30
+SUMMARY:Cal Ripken Jr. plays the first game of his 2\,632-game streak (1982
+ )
+DESCRIPTION:1982: Cal Ripken Jr. plays the first game of his 2\,632-game st
+ reak\n1997: Mike Mussina retires the first 25 Indians before Sandy Alomar 
+ Jr.'s single ends his perfect game bid\n1956: Bob Hale hits a walk-off sin
+ gle\n1956: Bob Nieman hits a walk-off single\n2026: Pete Alonso hits a wal
+ k-off single\n\nMore: https://jeffpaul.github.io/orioles-calendar/#05-30
 URL:https://jeffpaul.github.io/orioles-calendar/#05-30
 END:VEVENT
 BEGIN:VEVENT
@@ -1488,14 +1499,16 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000622
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Austin Hays hits for the cycle (2022)
-DESCRIPTION:2022: Austin Hays hits for the cycle\n1976: Rick Dempsey plays 
- his first game for the Orioles\n1962: Hobie Landrith hits a walk-off home 
- run\n1979: Doug DeCinces hits a walk-off home run\n1992: Mike Devereaux hi
- ts a walk-off single\n1996: Mark Smith hits a walk-off home run\n1957: Jim
-  Busby hits an inside-the-park home run\n1992: Orioles acquire Rick Dempse
- y as a free agent\n1976: Tippy Martinez plays his first game for the Oriol
- es\n\nMore: https://jeffpaul.github.io/orioles-calendar/#06-22
+SUMMARY:Doug DeCinces's walk-off home run starts the summer of Orioles Magi
+ c (1979)
+DESCRIPTION:1979: Doug DeCinces's walk-off home run starts the summer of Or
+ ioles Magic\n2022: Austin Hays hits for the cycle\n1976: Rick Dempsey play
+ s his first game for the Orioles\n1962: Hobie Landrith hits a walk-off hom
+ e run\n1979: Doug DeCinces hits a walk-off home run\n1992: Mike Devereaux 
+ hits a walk-off single\n1996: Mark Smith hits a walk-off home run\n1957: J
+ im Busby hits an inside-the-park home run\n1992: Orioles acquire Rick Demp
+ sey as a free agent\n1976: Tippy Martinez plays his first game for the Ori
+ oles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#06-22
 URL:https://jeffpaul.github.io/orioles-calendar/#06-22
 END:VEVENT
 BEGIN:VEVENT
@@ -1600,10 +1613,13 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000630
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Bob Saverine hits a walk-off single (1963)
-DESCRIPTION:1963: Bob Saverine hits a walk-off single\n1978: Pat Kelly hits
-  a walk-off single\n2012: Orioles acquire Jim Thome in a trade\n\nMore: ht
- tps://jeffpaul.github.io/orioles-calendar/#06-30
+SUMMARY:Down 10–1 in the seventh inning\, the Orioles beat the Red Sox 11
+ –10\, the biggest comeback in Orioles history (2009)
+DESCRIPTION:2009: Down 10–1 in the seventh inning\, the Orioles beat the 
+ Red Sox 11–10\, the biggest comeback in Orioles history\n1963: Bob Saver
+ ine hits a walk-off single\n1978: Pat Kelly hits a walk-off single\n2012: 
+ Orioles acquire Jim Thome in a trade\n\nMore: https://jeffpaul.github.io/o
+ rioles-calendar/#06-30
 URL:https://jeffpaul.github.io/orioles-calendar/#06-30
 END:VEVENT
 BEGIN:VEVENT
@@ -2308,12 +2324,14 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000822
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Nick Markakis hits three home runs (2006)
-DESCRIPTION:2006: Nick Markakis hits three home runs\n2002: Tony Batista hi
- ts a walk-off single\n2020: Pedro Severino hits a walk-off single\n2026: D
- ylan Beavers hits a walk-off double\n1962: Ron Hansen plays his final game
-  for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#08-
- 22
+SUMMARY:The Rangers beat the Orioles 30–3\, the most runs by a team in a 
+ modern major league game (2007)
+DESCRIPTION:2007: The Rangers beat the Orioles 30–3\, the most runs by a 
+ team in a modern major league game\n2006: Nick Markakis hits three home ru
+ ns\n2002: Tony Batista hits a walk-off single\n2020: Pedro Severino hits a
+  walk-off single\n2026: Dylan Beavers hits a walk-off double\n1962: Ron Ha
+ nsen plays his final game for the Orioles\n\nMore: https://jeffpaul.github
+ .io/orioles-calendar/#08-22
 URL:https://jeffpaul.github.io/orioles-calendar/#08-22
 END:VEVENT
 BEGIN:VEVENT
@@ -2336,13 +2354,15 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000824
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Cal Ripken Jr. is born (1960)
-DESCRIPTION:1960: Cal Ripken Jr. is born\n2012: Chris Davis hits three home
-  runs\n1969: Orioles lose a 18-inning game\n1982: Joe Nolan hits a walk-of
- f home run\n1983: Lenn Sakata hits a walk-off home run\n1988: Joe Orsulak 
- hits a walk-off sacrifice fly\n1988: Larry Sheets hits a walk-off home run
- \n1990: Cal Ripken Jr. hits a walk-off sacrifice fly\n\nMore: https://jeff
- paul.github.io/orioles-calendar/#08-24
+SUMMARY:Tippy Martinez picks off three Blue Jays in the 10th inning\, then 
+ Lenn Sakata wins it with a home run (1983)
+DESCRIPTION:1983: Tippy Martinez picks off three Blue Jays in the 10th inni
+ ng\, then Lenn Sakata wins it with a home run\n1960: Cal Ripken Jr. is bor
+ n\n2012: Chris Davis hits three home runs\n1969: Orioles lose a 18-inning 
+ game\n1982: Joe Nolan hits a walk-off home run\n1983: Lenn Sakata hits a w
+ alk-off home run\n1988: Joe Orsulak hits a walk-off sacrifice fly\n1988: L
+ arry Sheets hits a walk-off home run\n1990: Cal Ripken Jr. hits a walk-off
+  sacrifice fly\n\nMore: https://jeffpaul.github.io/orioles-calendar/#08-24
 URL:https://jeffpaul.github.io/orioles-calendar/#08-24
 END:VEVENT
 BEGIN:VEVENT
@@ -2504,13 +2524,15 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000905
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Al Bumbry plays his first game for the Orioles (1972)
-DESCRIPTION:1972: Al Bumbry plays his first game for the Orioles\n1975: Mik
- e Flanagan plays his first game for the Orioles\n1955: Orioles win on a wa
- lk-off by Jim Wilson\n1966: Paul Blair hits a walk-off single\n1980: Ken S
- ingleton hits a walk-off double\n2017: Manny Machado hits a walk-off home 
- run\n2025: Samuel Basallo hits a walk-off home run\n\nMore: https://jeffpa
- ul.github.io/orioles-calendar/#09-05
+SUMMARY:Cal Ripken Jr. plays his 2\,130th consecutive game\, tying Lou Gehr
+ ig (1995)
+DESCRIPTION:1995: Cal Ripken Jr. plays his 2\,130th consecutive game\, tyin
+ g Lou Gehrig\n1972: Al Bumbry plays his first game for the Orioles\n1975: 
+ Mike Flanagan plays his first game for the Orioles\n1955: Orioles win on a
+  walk-off by Jim Wilson\n1966: Paul Blair hits a walk-off single\n1980: Ke
+ n Singleton hits a walk-off double\n2017: Manny Machado hits a walk-off ho
+ me run\n2025: Samuel Basallo hits a walk-off home run\n\nMore: https://jef
+ fpaul.github.io/orioles-calendar/#09-05
 URL:https://jeffpaul.github.io/orioles-calendar/#09-05
 END:VEVENT
 BEGIN:VEVENT
@@ -2683,11 +2705,13 @@ DTSTART;VALUE=DATE:20000917
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles clinch the 1970 AL East title (1970)
-DESCRIPTION:1970: Orioles clinch the 1970 AL East title\n1955: Brooks Robin
- son plays his first game for the Orioles\n1957: Bob Nieman hits a walk-off
-  home run\n1973: Earl Williams hits a walk-off home run\n2023: Cedric Mull
- ins hits a walk-off sacrifice fly\n1990: Leo Gomez plays his first game fo
- r the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#09-17
+DESCRIPTION:1970: Orioles clinch the 1970 AL East title\n2013: Chris Davis 
+ hits his 51st home run\, breaking Brady Anderson's franchise record\n1955:
+  Brooks Robinson plays his first game for the Orioles\n1957: Bob Nieman hi
+ ts a walk-off home run\n1973: Earl Williams hits a walk-off home run\n2023
+ : Cedric Mullins hits a walk-off sacrifice fly\n1990: Leo Gomez plays his 
+ first game for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-cal
+ endar/#09-17
 URL:https://jeffpaul.github.io/orioles-calendar/#09-17
 END:VEVENT
 BEGIN:VEVENT
@@ -2727,15 +2751,17 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000920
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Cal Ripken Jr. sits out\, ending his streak at 2\,632 consecutive g
- ames (1998)
-DESCRIPTION:1998: Cal Ripken Jr. sits out\, ending his streak at 2\,632 con
- secutive games\n1958: Hoyt Wilhelm throws a no-hitter\n1973: Orioles turn 
- a triple play\n2013: Orioles lose a 18-inning game\n1975: Paul Blair hits 
- a walk-off double\n1982: John Lowenstein hits a walk-off home run\n2016: T
- rey Mancini plays his first game for the Orioles\n1998: Jimmy Key plays hi
- s final game for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-c
- alendar/#09-20
+SUMMARY:Roger Maris hits his 59th home run off Milt Pappas at Memorial Stad
+ ium\, in the Yankees' 154th game\, one short of Babe Ruth's 60 (1961)
+DESCRIPTION:1961: Roger Maris hits his 59th home run off Milt Pappas at Mem
+ orial Stadium\, in the Yankees' 154th game\, one short of Babe Ruth's 60\n
+ 1998: Cal Ripken Jr. sits out\, ending his streak at 2\,632 consecutive ga
+ mes\n1958: Hoyt Wilhelm throws a no-hitter\n1973: Orioles turn a triple pl
+ ay\n2013: Orioles lose a 18-inning game\n1975: Paul Blair hits a walk-off 
+ double\n1982: John Lowenstein hits a walk-off home run\n2016: Trey Mancini
+  plays his first game for the Orioles\n1998: Jimmy Key plays his final gam
+ e for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#09
+ -20
 URL:https://jeffpaul.github.io/orioles-calendar/#09-20
 END:VEVENT
 BEGIN:VEVENT
@@ -2823,16 +2849,18 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000926
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Boog Powell plays his first game for the Orioles (1961)
-DESCRIPTION:1961: Boog Powell plays his first game for the Orioles\n1962: D
- ave McNally plays his first game for the Orioles\n1959: Bob Nieman plays h
- is final game for the Orioles\n1965: Dick Brown hits a walk-off single\n19
- 91: Dwight Evans draws a walk-off walk\n1958: Joe Taylor hits an inside-th
- e-park home run\n2011: Robert Andino hits an inside-the-park home run\n201
- 8: John Means plays his first game for the Orioles\n1962: Andy Etchebarren
-  plays his first game for the Orioles\n2006: Rodrigo Lopez plays his final
-  game for the Orioles\n…and 1 more\n\nMore: https://jeffpaul.github.io/o
- rioles-calendar/#09-26
+SUMMARY:Jim Palmer wins his 20th game\, giving the Orioles four 20-game win
+ ners with Dave McNally\, Mike Cuellar and Pat Dobson (1971)
+DESCRIPTION:1971: Jim Palmer wins his 20th game\, giving the Orioles four 2
+ 0-game winners with Dave McNally\, Mike Cuellar and Pat Dobson\n1961: Boog
+  Powell plays his first game for the Orioles\n1962: Dave McNally plays his
+  first game for the Orioles\n1959: Bob Nieman plays his final game for the
+  Orioles\n1965: Dick Brown hits a walk-off single\n1991: Dwight Evans draw
+ s a walk-off walk\n1958: Joe Taylor hits an inside-the-park home run\n2011
+ : Robert Andino hits an inside-the-park home run\n2018: John Means plays h
+ is first game for the Orioles\n1962: Andy Etchebarren plays his first game
+  for the Orioles\n…and 2 more\n\nMore: https://jeffpaul.github.io/oriole
+ s-calendar/#09-26
 URL:https://jeffpaul.github.io/orioles-calendar/#09-26
 END:VEVENT
 BEGIN:VEVENT
@@ -2859,14 +2887,15 @@ DTSTART;VALUE=DATE:20000928
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles clinch the 2023 AL East title (2023)
-DESCRIPTION:2023: Orioles clinch the 2023 AL East title\n2000: Orioles win 
- by 22 runs\n1976: Bobby Grich hits a walk-off home run\n1977: Rick Dempsey
-  hits a walk-off single\n2007: Melvin Mora hits a walk-off single\n2011: R
- obert Andino hits a walk-off single\n1975: Don Baylor plays his final game
-  for the Orioles\n2008: Ramon Hernandez plays his final game for the Oriol
- es\n1999: Jesse Orosco plays his final game for the Orioles\n2025: Jordan 
- Westburg plays his final game for the Orioles\n…and 1 more\n\nMore: http
- s://jeffpaul.github.io/orioles-calendar/#09-28
+DESCRIPTION:2023: Orioles clinch the 2023 AL East title\n1960: Ted Williams
+  homers off the Orioles' Jack Fisher in the final at-bat of his career\n20
+ 00: Orioles win by 22 runs\n1976: Bobby Grich hits a walk-off home run\n19
+ 77: Rick Dempsey hits a walk-off single\n2007: Melvin Mora hits a walk-off
+  single\n2011: Robert Andino hits a walk-off single\n1975: Don Baylor play
+ s his final game for the Orioles\n2008: Ramon Hernandez plays his final ga
+ me for the Orioles\n1999: Jesse Orosco plays his final game for the Oriole
+ s\n…and 2 more\n\nMore: https://jeffpaul.github.io/orioles-calendar/#09-
+ 28
 URL:https://jeffpaul.github.io/orioles-calendar/#09-28
 END:VEVENT
 BEGIN:VEVENT
@@ -2875,15 +2904,17 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20000929
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Bobby Grich plays his final game for the Orioles (1976)
-DESCRIPTION:1976: Bobby Grich plays his final game for the Orioles\n2013: B
- rian Roberts plays his final game for the Orioles\n1963: Jim Gentile plays
-  his final game for the Orioles\n2002: Mike Bordick plays his final game f
- or the Orioles\n1985: Rich Dauer plays his final game for the Orioles\n196
- 1: Hank Foiles hits a walk-off home run\n1970: Frank Robinson hits a walk-
- off double\n1970: Mark Belanger hits a walk-off sacrifice fly\n1974: Boog 
- Powell draws a walk-off walk\n2004: David Newhan hits a walk-off single\n
- …and 3 more\n\nMore: https://jeffpaul.github.io/orioles-calendar/#09-29
+SUMMARY:Brady Anderson hits his 50th home run on the last day of the season
+  (1996)
+DESCRIPTION:1996: Brady Anderson hits his 50th home run on the last day of 
+ the season\n1976: Bobby Grich plays his final game for the Orioles\n2013: 
+ Brian Roberts plays his final game for the Orioles\n1963: Jim Gentile play
+ s his final game for the Orioles\n2002: Mike Bordick plays his final game 
+ for the Orioles\n1985: Rich Dauer plays his final game for the Orioles\n19
+ 61: Hank Foiles hits a walk-off home run\n1970: Frank Robinson hits a walk
+ -off double\n1970: Mark Belanger hits a walk-off sacrifice fly\n1974: Boog
+  Powell draws a walk-off walk\n…and 4 more\n\nMore: https://jeffpaul.git
+ hub.io/orioles-calendar/#09-29
 URL:https://jeffpaul.github.io/orioles-calendar/#09-29
 END:VEVENT
 BEGIN:VEVENT
@@ -2940,16 +2971,20 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20001003
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Paul Blair plays his final game for the Orioles (1976)
-DESCRIPTION:1976: Paul Blair plays his final game for the Orioles\n1972: Da
- vey Johnson plays his final game for the Orioles\n1972: Don Buford plays h
- is final game for the Orioles\n1964: Sam Bowens draws a walk-off walk\n197
- 9: John Lowenstein hits a walk-off home run\n1990: Mickey Tettleton hits a
-  walk-off home run\n2015: Wei-Yin Chen plays his final game for the Oriole
- s\n1990: Mickey Tettleton plays his final game for the Orioles\n2010: Core
- y Patterson plays his final game for the Orioles\n1993: Todd Frohwirth pla
- ys his final game for the Orioles\n…and 2 more\n\nMore: https://jeffpaul
- .github.io/orioles-calendar/#10-03
+SUMMARY:On the season's last day\, the Brewers win 10–2 to take the AL Ea
+ st\, and the Memorial Stadium crowd salutes the retiring Earl Weaver (1982
+ )
+DESCRIPTION:1982: On the season's last day\, the Brewers win 10–2 to take
+  the AL East\, and the Memorial Stadium crowd salutes the retiring Earl We
+ aver\n2014: Delmon Young's pinch-hit\, bases-clearing double in the eighth
+  beats the Tigers in ALDS Game 2\n1976: Paul Blair plays his final game fo
+ r the Orioles\n1972: Davey Johnson plays his final game for the Orioles\n1
+ 972: Don Buford plays his final game for the Orioles\n1964: Sam Bowens dra
+ ws a walk-off walk\n1979: John Lowenstein hits a walk-off home run\n1990: 
+ Mickey Tettleton hits a walk-off home run\n2015: Wei-Yin Chen plays his fi
+ nal game for the Orioles\n1990: Mickey Tettleton plays his final game for 
+ the Orioles\n…and 4 more\n\nMore: https://jeffpaul.github.io/orioles-cal
+ endar/#10-03
 URL:https://jeffpaul.github.io/orioles-calendar/#10-03
 END:VEVENT
 BEGIN:VEVENT
@@ -2958,16 +2993,18 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20001004
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Melvin Mora plays his final game for the Orioles (2009)
-DESCRIPTION:2009: Melvin Mora plays his final game for the Orioles\n1981: D
- oug DeCinces plays his final game for the Orioles\n2016: Matt Wieters play
- s his final game for the Orioles\n1980: Mike Boddicker plays his first gam
- e for the Orioles\n1969: Paul Blair hits a walk-off single\n1980: Gary Roe
- nicke hits a walk-off home run\n2009: Orioles win on a walk-off by Jeffrey
-  Fiorentino\n1992: Randy Milligan plays his final game for the Orioles\n19
- 92: Joe Orsulak plays his final game for the Orioles\n1987: Mike Young pla
- ys his final game for the Orioles\n…and 1 more\n\nMore: https://jeffpaul
- .github.io/orioles-calendar/#10-04
+SUMMARY:Edwin Encarnación's walk-off home run in the 11th ends the Wild Ca
+ rd Game\, with Zack Britton still in the bullpen (2016)
+DESCRIPTION:2016: Edwin Encarnación's walk-off home run in the 11th ends t
+ he Wild Card Game\, with Zack Britton still in the bullpen\n2009: Melvin M
+ ora plays his final game for the Orioles\n1981: Doug DeCinces plays his fi
+ nal game for the Orioles\n2016: Matt Wieters plays his final game for the 
+ Orioles\n1980: Mike Boddicker plays his first game for the Orioles\n1969: 
+ Paul Blair hits a walk-off single\n1980: Gary Roenicke hits a walk-off hom
+ e run\n2009: Orioles win on a walk-off by Jeffrey Fiorentino\n1992: Randy 
+ Milligan plays his final game for the Orioles\n1992: Joe Orsulak plays his
+  final game for the Orioles\n…and 2 more\n\nMore: https://jeffpaul.githu
+ b.io/orioles-calendar/#10-04
 URL:https://jeffpaul.github.io/orioles-calendar/#10-04
 END:VEVENT
 BEGIN:VEVENT
@@ -2993,13 +3030,15 @@ RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles win the 1969 AL pennant (1969)
 DESCRIPTION:1969: Orioles win the 1969 AL pennant\n1979: Orioles win the 19
- 79 AL pennant\n1991: Last Orioles home game at Memorial Stadium\n2001: Bra
- dy Anderson plays his final game for the Orioles\n2001: Cal Ripken Jr. pla
- ys his final game for the Orioles\n1974: Dave McNally plays his final game
-  for the Orioles\n1985: Gary Roenicke plays his final game for the Orioles
- \n1985: Sammy Stewart plays his final game for the Orioles\n2001: Tim Rain
- es plays his final game for the Orioles\n\nMore: https://jeffpaul.github.i
- o/orioles-calendar/#10-06
+ 79 AL pennant\n1966: Jim Palmer\, nine days short of his 21st birthday\, o
+ utduels Sandy Koufax with a World Series shutout in Koufax's final game\n1
+ 991: Last Orioles home game at Memorial Stadium\n2001: Brady Anderson play
+ s his final game for the Orioles\n2001: Cal Ripken Jr. plays his final gam
+ e for the Orioles\n1974: Dave McNally plays his final game for the Orioles
+ \n1985: Gary Roenicke plays his final game for the Orioles\n1985: Sammy St
+ ewart plays his final game for the Orioles\n2001: Tim Raines plays his fin
+ al game for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calend
+ ar/#10-06
 URL:https://jeffpaul.github.io/orioles-calendar/#10-06
 END:VEVENT
 BEGIN:VEVENT
@@ -3020,9 +3059,11 @@ DTSTART;VALUE=DATE:20001009
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles win the 1966 World Series (1966)
-DESCRIPTION:1966: Orioles win the 1966 World Series\n1977: Brian Roberts is
-  born\n1974: Boog Powell plays his final game for the Orioles\n\nMore: htt
- ps://jeffpaul.github.io/orioles-calendar/#10-09
+DESCRIPTION:1966: Orioles win the 1966 World Series\n1996: In ALCS Game 1\,
+  12-year-old Jeffrey Maier reaches over the right-field wall to turn Derek
+  Jeter's fly ball into a game-tying home run\n1977: Brian Roberts is born\
+ n1974: Boog Powell plays his final game for the Orioles\n\nMore: https://j
+ effpaul.github.io/orioles-calendar/#10-09
 URL:https://jeffpaul.github.io/orioles-calendar/#10-09
 END:VEVENT
 BEGIN:VEVENT
@@ -3067,9 +3108,12 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20001013
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Eddie Murray plays his final game for the Orioles (1996)
-DESCRIPTION:1996: Eddie Murray plays his final game for the Orioles\n\nMore
- : https://jeffpaul.github.io/orioles-calendar/#10-13
+SUMMARY:Dave McNally hits a grand slam in Game 3\, the only one by a pitche
+ r in World Series history (1970)
+DESCRIPTION:1970: Dave McNally hits a grand slam in Game 3\, the only one b
+ y a pitcher in World Series history\n1996: Eddie Murray plays his final ga
+ me for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#1
+ 0-13
 URL:https://jeffpaul.github.io/orioles-calendar/#10-13
 END:VEVENT
 BEGIN:VEVENT
@@ -3090,9 +3134,10 @@ DTSTART;VALUE=DATE:20001015
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles win the 1970 World Series (1970)
-DESCRIPTION:1970: Orioles win the 1970 World Series\n1945: Jim Palmer is bo
- rn\n2014: Nick Markakis plays his final game for the Orioles\n\nMore: http
- s://jeffpaul.github.io/orioles-calendar/#10-15
+DESCRIPTION:1970: Orioles win the 1970 World Series\n1970: Brooks Robinson 
+ is named World Series MVP after five games of diving stops at third base\n
+ 1945: Jim Palmer is born\n2014: Nick Markakis plays his final game for the
+  Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#10-15
 URL:https://jeffpaul.github.io/orioles-calendar/#10-15
 END:VEVENT
 BEGIN:VEVENT
@@ -3102,9 +3147,10 @@ DTSTART;VALUE=DATE:20001016
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Orioles win the 1983 World Series (1983)
-DESCRIPTION:1983: Orioles win the 1983 World Series\n1991: Jonathan Schoop 
- is born\n1971: Brooks Robinson hits a walk-off sacrifice fly\n\nMore: http
- s://jeffpaul.github.io/orioles-calendar/#10-16
+DESCRIPTION:1983: Orioles win the 1983 World Series\n1969: The Miracle Mets
+  beat the 109-win Orioles in Game 5 to take the World Series\n1991: Jonath
+ an Schoop is born\n1971: Brooks Robinson hits a walk-off sacrifice fly\n\n
+ More: https://jeffpaul.github.io/orioles-calendar/#10-16
 URL:https://jeffpaul.github.io/orioles-calendar/#10-16
 END:VEVENT
 BEGIN:VEVENT
@@ -3113,9 +3159,12 @@ DTSTAMP:20260925T000000Z
 DTSTART;VALUE=DATE:20001017
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
-SUMMARY:Frank Robinson plays his final game for the Orioles (1971)
-DESCRIPTION:1971: Frank Robinson plays his final game for the Orioles\n\nMo
- re: https://jeffpaul.github.io/orioles-calendar/#10-17
+SUMMARY:The Pirates win Game 7\, completing a comeback from 3 games to 1 do
+ wn in the World Series (1979)
+DESCRIPTION:1979: The Pirates win Game 7\, completing a comeback from 3 gam
+ es to 1 down in the World Series\n1971: Frank Robinson plays his final gam
+ e for the Orioles\n\nMore: https://jeffpaul.github.io/orioles-calendar/#10
+ -17
 URL:https://jeffpaul.github.io/orioles-calendar/#10-17
 END:VEVENT
 BEGIN:VEVENT
