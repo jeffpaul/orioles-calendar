@@ -113,10 +113,37 @@
     const key = `${pad(month + 1)}-${pad(day)}`;
     let list = (byDay.get(key) || []).slice();
     if (month === 1 && day === 28 && !isLeap(year)) list = list.concat(byDay.get("02-29") || []);
-    return list
-      .filter(i => i.year <= year && show[i.kind] && inEra(i))
+    return groupRoutine(list.filter(i => i.year <= year && show[i.kind] && inEra(i)))
       .sort((x, y) => y.score - x.score || x.year - y.year);
   }
+
+  // A player is notable enough for his own debut or final-game line with
+  // this much franchise WAR, or a Hall of Fame plaque.
+  const NOTABLE_WAR = 5;
+  const isNotable = p => p && (p.hof || (war(p) || 0) >= NOTABLE_WAR);
+
+  // Fold each date's debuts (or final games) of non-notable players, across
+  // all seasons, into one line, so September call-ups don't bury the rare moments.
+  function groupRoutine(items) {
+    const out = [], groups = new Map();
+    for (const i of items) {
+      const t = i.event?.t;
+      if ((t !== "debut" && t !== "final_game") || isNotable(i.player)) { out.push(i); continue; }
+      const key = t;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(i);
+    }
+    for (const members of groups.values()) {
+      if (members.length === 1) { out.push(members[0]); continue; }
+      members.sort((x, y) => x.year - y.year);
+      const best = Math.max(...members.map(m => m.score));
+      out.push({ ...members.at(-1), group: members, score: best });
+    }
+    return out;
+  }
+
+  const groupTitle = item => `${item.group.length} players ${item.event.t === "debut"
+    ? "made their franchise debut" : "played their final franchise game"} on this date`;
 
   function recordOn(year, month, day) {
     const r = { w: 0, l: 0, t: 0, pw: 0, pl: 0 };
@@ -138,6 +165,7 @@
   function chipLabel(item) {
     const e = item.event;
     if (!e) return item.player.n;
+    if (item.group) return `${item.group.length} ${e.t === "debut" ? "debuts" : "final games"}`;
     if (e.c) return e.title.split(",")[0];
     const who = e.ids.map(lastName).filter(Boolean);
     const short = {
@@ -282,7 +310,7 @@
     for (const k of KINDS) {
       const list = items.filter(i => i.kind === k);
       if (!list.length) continue;
-      const line = i => i.event ? eventLine(i, year) : playerLine(i, year);
+      const line = i => i.group ? groupLine(i, year) : i.event ? eventLine(i, year) : playerLine(i, year);
       html += `<h4><span class="swatch ${k}"></span>${KIND_HEADINGS[k]} (${list.length})</h4><ul>${list.map(line).join("")}</ul>`;
     }
     panel.innerHTML = html;
@@ -303,7 +331,52 @@
     if (location.hash !== h) history.replaceState(null, "", h);
   }
 
-  function render() { renderGrid(); renderPanel(); writeHash(); }
+  function groupLine(item, year) {
+    const names = item.group.map(i => `${i.player ? nameLink(i.player) : esc(i.event.title)} (${i.year})`).join(", ");
+    return `<li>
+      <div>${esc(groupTitle(item))}</div>
+      <div class="tag ${item.kind}">${span(item.group.map(i => i.year))}</div>
+      <div class="meta">${names}</div>
+    </li>`;
+  }
+
+  // The day's single best story, above the grid.
+  function renderStory() {
+    const { year, month, day } = selected;
+    const items = itemsOn(year, month, day);
+    const story = $("story");
+    const isToday = `${year}-${month}-${day}` === todayKey;
+    const heading = isToday ? "Today in franchise history" : `On ${MONTHS[month]} ${day}`;
+    if (!items.length) {
+      story.innerHTML = `<p class="story-kicker">${heading}</p><p class="story-title">Nothing on this day with the current filters.</p>`;
+      return;
+    }
+    const [top, ...rest] = items;
+    let title, detail = "", link = "";
+    if (top.group) {
+      title = groupTitle(top);
+      detail = top.group.map(i => `${i.player?.n} (${i.year})`).join(", ");
+    } else if (top.event) {
+      title = top.event.title;
+      detail = top.event.detail || "";
+      link = top.event.link || "";
+    } else {
+      const p = top.player, n = year - top.year;
+      title = top.kind === "b" ? `${p.n} ${p.x ? `was born ${n} years ago` : `turns ${n}`}`
+        : top.kind === "x" ? `${p.n} died ${yearsAgo(n).toLowerCase()}`
+        : `${p.n} joined the ${eraOf(top.year) || "Orioles"} ${yearsAgo(n).toLowerCase()}`;
+      detail = `${span(p.y)} · ${p.g.toLocaleString()} games${warText(p) ? ` · ${warText(p)}` : ""}`;
+    }
+    const when = top.year === year ? fmtDate(top.date) : `${yearsAgo(year - top.year)} · ${top.year}`;
+    const also = rest.slice(0, 2).map(i => esc(i.group ? groupTitle(i) : i.event ? i.event.title : i.player.n));
+    story.innerHTML = `
+      <p class="story-kicker"><span class="swatch ${top.kind}"></span>${heading} · ${when}${eraOf(top.year) ? ` · ${eraOf(top.year)}` : ""}</p>
+      <p class="story-title">${esc(title)}</p>
+      ${detail ? `<p class="meta">${esc(detail)}${link ? ` · <a href="${link}" target="_blank" rel="noopener">box score</a>` : ""}</p>` : ""}
+      ${also.length ? `<p class="meta story-also">Also: ${also.join(" · ")}${rest.length > 2 ? ` · and ${rest.length - 2} more` : ""}</p>` : ""}`;
+  }
+
+  function render() { renderStory(); renderGrid(); renderPanel(); writeHash(); }
 
   function goTo(year, month, day) {
     year = Math.max(1901, Math.min(2100, year));

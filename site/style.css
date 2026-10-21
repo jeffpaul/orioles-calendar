@@ -64,6 +64,11 @@ header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; j
 .swatch.m { background: var(--m); } .swatch.g { background: var(--g); } .swatch.d { background: var(--d); }
 .swatch.b { background: var(--b); } .swatch.a { background: var(--a); } .swatch.x { background: var(--x); }
 
+.story { display: grid; gap: 4px; margin: 0 0 16px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius); }
+.story p { margin: 0; }
+.story-kicker { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.story-title { font-size: 1.3rem; font-weight: 650; line-height: 1.25; text-wrap: balance; }
+.story-also { margin-top: 2px; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; align-items: start; }
 @media (max-width: 960px) { .layout { grid-template-columns: minmax(0, 1fr); } .panel { position: static; max-height: none; } }
 .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
