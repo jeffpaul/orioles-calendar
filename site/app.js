@@ -11,15 +11,18 @@
   const TYPE_KIND = {
     walk_off: "g", inside_the_park_hr: "g", triple_play: "g", long_game: "g", big_win: "g",
     three_homer_game: "g", strikeout_game: "g", ballpark_first: "g", ballpark_last: "g",
-    debut: "d", final_game: "d",
+    debut: "d", final_game: "d", mgr_first: "d", mgr_return: "d", mgr_last: "d", mgr_stint_end: "d",
   };
   // How interesting each event type is, used to pick which items a day cell shows.
   const TYPE_SCORE = {
     world_series: 95, pennant: 90, division_title: 85, perfect_game: 85, callout: 80, no_hitter: 75,
-    four_homer_game: 75, career_milestone: 70, series_win: 65, cycle: 60, ballpark_first: 55, ballpark_last: 50,
-    three_homer_game: 45, strikeout_game: 45, long_game: 40, triple_play: 40, big_win: 35, walk_off: 30,
+    four_homer_game: 75, hof_induction: 72, career_milestone: 70, mgr_milestone: 70, series_win: 65, cycle: 60,
+    ballpark_first: 55, mgr_first: 55, mgr_return: 55, ballpark_last: 50, mgr_last: 50, three_homer_game: 45,
+    strikeout_game: 45, mgr_stint_end: 45, long_game: 40, triple_play: 40, big_win: 35, walk_off: 30,
     inside_the_park_hr: 28,
   };
+  // Managing stints shorter than this are interim spells, scored like a routine debut.
+  const INTERIM_GAMES = 100;
   const HOW = {
     T: "Trade", Tp: "Added to a trade", P: "Purchase", F: "Free agent signing", Fa: "Amateur free agent",
     Fb: "Bonus baby signing", Fo: "Free agent signing", W: "Waiver claim", Wf: "Waiver claim", D: "Rule 5 draft",
@@ -46,20 +49,38 @@
   };
   const yearsAgo = n => n === 0 ? "This year" : n === 1 ? "1 year ago" : `${n} years ago`;
   const span = years => years[0] === years.at(-1) ? String(years[0]) : `${years[0]}–${years.at(-1)}`;
+  // "1968–1982, 1985–1986": runs of consecutive seasons.
+  const spans = years => {
+    const runs = [];
+    for (const y of years) {
+      if (runs.length && y === runs.at(-1).at(-1) + 1) runs.at(-1).push(y); else runs.push([y]);
+    }
+    return runs.map(span).join(", ");
+  };
+  // Every franchise season a person played or managed.
+  const years = p => [...new Set([...p.y, ...(p.m ? p.m.y : [])])].sort((a, b) => a - b);
   const eraOf = year => year < 1902 ? "Brewers" : year < ORIOLES_FIRST ? "Browns" : "";
   const ERAS = ["Brewers", "Browns", "Orioles"];
   const eraName = year => eraOf(year) || "Orioles";
   const eraTag = year => eraOf(year) ? `<span class="era">${eraOf(year)}</span>` : "";
+  // Baseball-Reference IDs ending in 99 belong to people who only managed.
   const playerUrl = p => p.bbref
-    ? `https://www.baseball-reference.com/players/${p.bbref[0]}/${p.bbref}.shtml`
+    ? (/99$/.test(p.bbref) ? `https://www.baseball-reference.com/managers/${p.bbref}.shtml`
+      : `https://www.baseball-reference.com/players/${p.bbref[0]}/${p.bbref}.shtml`)
     : p.mlbam ? `https://www.mlb.com/player/${p.mlbam}` : null;
   const war = p => (p.w || [null, null])[1];
+  const roles = p => [p.y.length ? "Player" : "", p.m ? "Manager" : ""].filter(Boolean).join(", ");
+  const mgrText = p => {
+    if (!p.m) return "";
+    const post = p.m.pw + p.m.pl ? `, ${p.m.pw}–${p.m.pl} postseason` : "";
+    return `Manager ${spans(p.m.y)} · ${p.m.w.toLocaleString()}–${p.m.l.toLocaleString()}${post}`;
+  };
 
   let players = [], events = [], records = {}, meta = {}, schedule = new Map();
   let playerById = new Map(), byDay = new Map(), eventsByPlayer = new Map(), searchIndex = [];
   const now = new Date();
   const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-  const show = { s: true, m: true, g: true, d: true, b: true, a: true, x: false };
+  const show = { s: true, m: true, g: true, d: true, b: true, a: true, x: true };
   const eras = new Set(ERAS);  // franchise eras to show, all by default
   let view = { year: now.getFullYear(), month: now.getMonth() };
   let selected = { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
@@ -68,7 +89,9 @@
   // Index -------------------------------------------------------------------
 
   function score(item) {
-    if (item.event) return TYPE_SCORE[item.event.t] ??
+    const e = item.event;
+    if (e && TYPE_KIND[e.t] === "d" && e.t.startsWith("mgr_") && e.n < INTERIM_GAMES) return 20;
+    if (e) return TYPE_SCORE[e.t] ??
       10 + Math.min(40, Math.max(0, (war(item.player || {}) || 0) * 1.5));
     const w = Math.max(0, war(item.player) || 0);
     const base = { b: 8, a: 6, x: 5 }[item.kind];
@@ -101,14 +124,14 @@
       }
     }
     const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-    searchIndex = players.map(p => [norm(p.n), p]);
+    searchIndex = players.map(p => [norm(p.n), p, p.g + (p.m ? p.m.g : 0)]);
     searchIndex.norm = norm;
   }
 
   // Is an item inside the selected eras? Birthdays and deaths belong to every
   // era the player played in; everything else to the era it happened in.
   const allEras = () => eras.size === ERAS.length;
-  const playedIn = p => p.y.some(y => eras.has(eraName(y)));
+  const playedIn = p => years(p).some(y => eras.has(eraName(y)));
   function inEra(item) {
     if (allEras()) return true;
     if (item.kind === "b" || item.kind === "x") return playedIn(item.player);
@@ -188,6 +211,9 @@
       series_win: e.title.replace(/^\S+ win the \d+ /, "Won "),
       ballpark_first: "First game at " + e.title.replace(/^First \S+ home game at /, ""),
       ballpark_last: "Last game at " + e.title.replace(/^Last \S+ home game at /, ""),
+      mgr_first: "First game as manager", mgr_return: "Back as manager", mgr_last: "Last game as manager",
+      mgr_stint_end: "Managing stint ends", mgr_milestone: `${(e.title.match(/[\d,]+th win/) || ["Win"])[0]} as manager`,
+      hof_induction: "Hall of Fame",
     }[e.t] || e.title;
     const teamOnly = ["world_series", "pennant", "division_title", "series_win", "long_game", "big_win",
                       "ballpark_first", "ballpark_last", "triple_play"];
@@ -202,6 +228,9 @@
       ? `${ours.toFixed(1)} WAR with the franchise (${career.toFixed(1)} career)`
       : `${ours.toFixed(1)} WAR`;
   };
+  const playText = p => p.y.length ? `${span(p.y)} · ${p.g.toLocaleString()} G · ${(p.p || []).join(", ") || "—"}` +
+    (warText(p, true) ? ` · ${warText(p, true)}` : "") : "";
+  const personMeta = p => [playText(p), mgrText(p)].filter(Boolean).join(" · ");
   const nameLink = p => {
     const url = playerUrl(p);
     return url ? `<a href="${url}" target="_blank" rel="noopener">${esc(p.n)}</a>` : esc(p.n);
@@ -304,9 +333,9 @@
         (item.acq.from ? ` from ${esc(item.acq.from)}` : "");
     }
     return `<li>
-      <div>${nameLink(p)}${p.hof ? ` <span class="era">HOF</span>` : ""}${eraTag(p.y[0]) && p.y.at(-1) < ORIOLES_FIRST ? eraTag(p.y[0]) : ""}</div>
+      <div>${nameLink(p)}${p.hof ? ` <span class="era">HOF</span>` : ""}${eraTag(years(p)[0]) && years(p).at(-1) < ORIOLES_FIRST ? eraTag(years(p)[0]) : ""}</div>
       <div class="tag ${item.kind}">${what}</div>
-      <div class="meta">${span(p.y)} · ${p.g.toLocaleString()} G · ${esc((p.p || []).join(", ") || "—")}${warText(p, true) ? ` · ${warText(p, true)}` : ""}</div>
+      <div class="meta">${esc(personMeta(p))}</div>
     </li>`;
   }
 
@@ -317,17 +346,19 @@
     for (const a of p.a || []) {
       dates.push(`<div><span class="tag a">${esc(HOW[a.how] || "Acquired")}</span> ${fmtDate(a.d)}${a.from ? ` from ${esc(a.from)}` : ""} ${showBtn(a.d)}</div>`);
     }
-    if (!(p.a || []).length) dates.push(`<div class="meta">How he joined the franchise isn't recorded</div>`);
+    if (p.y.length && !(p.a || []).length) dates.push(`<div class="meta">How he joined the franchise isn't recorded</div>`);
     for (const e of (eventsByPlayer.get(p.id) || []).slice().sort((x, y) => x.d.localeCompare(y.d))) {
       const kind = e.c ? "m" : TYPE_KIND[e.t] || "m";
       dates.push(`<div><span class="tag ${kind}">${esc(e.c ? "Moment" : chipLabel({ event: e }).split(":")[0])}</span> ${fmtDate(e.d)} ${showBtn(e.d)}</div>`);
     }
     if (p.x) dates.push(`<div><span class="tag x">Died</span> ${fmtDate(p.x)} ${showBtn(p.x)}</div>`);
-    const eras = [...new Set(p.y.map(y => eraOf(y) || "Orioles"))].join(", ");
+    const eras = [...new Set(years(p).map(y => eraOf(y) || "Orioles"))].join(", ");
+    const play = p.y.length ? `<div class="meta">${eras} · Played ${span(p.y)} · ${p.g.toLocaleString()} games · ${esc((p.p || []).join(", ") || "—")}</div>` : "";
     return `<div class="player-card">
       <h3>${nameLink(p)}${p.hof ? ` <span class="era">Hall of Fame</span>` : ""}</h3>
-      <div class="meta">${eras} · ${span(p.y)} · ${p.g.toLocaleString()} games · ${esc((p.p || []).join(", ") || "—")}</div>
+      ${play}
       ${warText(p) ? `<div class="meta">${warText(p)}</div>` : ""}
+      ${p.m ? `<div class="meta">${p.y.length ? "" : `${eras} · `}${esc(mgrText(p))} in ${p.m.g.toLocaleString()} games</div>` : ""}
       <div class="dates">${dates.join("")}</div>
     </div><hr>`;
   }
@@ -444,7 +475,7 @@
       title = top.kind === "b" ? `${p.n} ${p.x ? `was born ${n} years ago` : `turns ${n}`}`
         : top.kind === "x" ? `${p.n} died ${yearsAgo(n).toLowerCase()}`
         : `${p.n} joined the ${eraOf(top.year) || "Orioles"} ${yearsAgo(n).toLowerCase()}`;
-      detail = `${span(p.y)} · ${p.g.toLocaleString()} games${warText(p) ? ` · ${warText(p)}` : ""}`;
+      detail = personMeta(p);
     }
     const when = top.year === year ? fmtDate(top.date) : `${yearsAgo(year - top.year)} · ${top.year}`;
     const also = rest.slice(0, 2).map(i => esc(i.group ? groupTitle(i) : i.event ? i.event.title : i.player.n));
@@ -460,6 +491,9 @@
   function renderSummary() {
     if (!eras.size) { $("summary").textContent = "No franchise eras selected below the calendar"; return; }
     const shown = players.filter(playedIn);
+    const inEras = ys => ys.some(y => eras.has(eraName(y)));
+    const playing = shown.filter(p => inEras(p.y)).length;
+    const managers = shown.filter(p => p.m && inEras(p.m.y)).length;
     const withAcq = shown.filter(p => (p.a || []).length).length;
     const moments = events.filter(e => eras.has(eraName(+e.d.slice(0, 4)))).length;
     const bounds = { Brewers: [1901, 1901], Browns: [1902, ORIOLES_FIRST - 1],
@@ -470,7 +504,7 @@
       const [lo, hi] = bounds[e];
       if (ranges.length && ranges.at(-1)[1] === lo - 1) ranges.at(-1)[1] = hi; else ranges.push([lo, hi]);
     }
-    $("summary").textContent = `${shown.length.toLocaleString()} players · ${withAcq.toLocaleString()} with acquisition dates · ` +
+    $("summary").textContent = `${playing.toLocaleString()} players · ${managers} manager${managers === 1 ? "" : "s"} · ${withAcq.toLocaleString()} with acquisition dates · ` +
       `${moments.toLocaleString()} moments, ${ranges.map(([lo, hi]) => span([lo, hi])).join(" and ")}`;
   }
 
@@ -534,7 +568,8 @@
     focusPlayer = p;
     search.value = p.n;
     closeResults();
-    const target = p.b || (p.a || []).map(a => a.d).find(d => FULL_DATE.test(d));
+    const target = p.b || (p.a || []).map(a => a.d).find(d => FULL_DATE.test(d)) ||
+      (eventsByPlayer.get(p.id) || []).map(e => e.d).sort()[0];
     if (target && FULL_DATE.test(target)) goToAnniversary(target); else render();
   }
   function showResults() {
@@ -543,13 +578,13 @@
     const found = searchIndex.filter(([n]) => n.includes(q));
     const inView = found.filter(([, p]) => playedIn(p));
     matches = inView
-      .sort((x, y) => (y[0].startsWith(q) - x[0].startsWith(q)) || y[1].g - x[1].g)
+      .sort((x, y) => (y[0].startsWith(q) - x[0].startsWith(q)) || y[2] - x[2])
       .slice(0, 12).map(([, p]) => p);
     active = -1;
     const hidden = found.length - inView.length;
     results.innerHTML = (matches.length
-      ? matches.map((p, i) => `<li role="option"><button data-i="${i}">${esc(p.n)} <small>${eraOf(p.y[0]) ? eraOf(p.y[0]) + " · " : ""}${span(p.y)}</small></button></li>`).join("")
-      : `<li class="empty" style="padding:6px 8px">No players found</li>`) +
+      ? matches.map((p, i) => `<li role="option"><button data-i="${i}">${esc(p.n)} <small>${roles(p)} · ${eraOf(years(p)[0]) ? eraOf(years(p)[0]) + " · " : ""}${span(years(p))}</small></button></li>`).join("")
+      : `<li class="empty" style="padding:6px 8px">No players or managers found</li>`) +
       (hidden ? `<li class="empty" style="padding:6px 8px">${hidden} more from eras that are turned off below the calendar</li>` : "");
     results.hidden = false;
     search.setAttribute("aria-expanded", "true");

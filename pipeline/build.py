@@ -99,8 +99,9 @@ def main(argv=None):
                 for k, v in pos.items():
                     api_positions[pid][k] += v
             log(f"  {len(g2)} games")
+        managers = {g["mgr"] for g in games if g.get("mgr")}
         new_mlbam = [int(p.split(":")[1]) if p.startswith("mlbam:") else retro_to.get(p, (None,))[0]
-                     for p in apps if p not in bio or p.startswith("mlbam:")]
+                     for p in set(apps) | managers if p not in bio or p.startswith("mlbam:")]
         api_people = statsapi.people([m for m in new_mlbam if m])
 
     # Stats API games carry MLB venue IDs; use the Retrosheet park code when
@@ -121,8 +122,11 @@ def main(argv=None):
         trans.setdefault(pid_for(mlbam), [])
         trans[pid_for(mlbam)] += [(d, code, frm) for d, code, frm in lst]
 
+    managed = derive.manager_records(games)
+    hof_years, hof_by_name = ({}, {}) if args.no_api else statsapi.hall_of_fame()
     players, names = [], {}
-    for pid, lst in apps.items():
+    for pid in list(apps) + [pid for pid in managed if pid not in apps]:
+        lst = apps.get(pid, [])
         dates = sorted(d for d, _ in lst)
         mlbam, bbref = (int(pid.split(":")[1]), None) if pid.startswith("mlbam:") else retro_to.get(pid, (None, None))
         b = bio.get(pid)
@@ -146,13 +150,19 @@ def main(argv=None):
         api_games = len({gid for _, gid in lst if gid.startswith("mlb")})
         main_pos = [p for p, n in pos.most_common() if n and p not in ("PH", "PR")] or [p for p, n in pos.most_common() if n]
         acq = sorted({(d, typ, frm) for d, typ, frm in trans.get(pid, [])
-                      if d and d[:4].isdigit() and int(d[:4]) <= seasons[-1]})
+                      if seasons and d and d[:4].isdigit() and int(d[:4]) <= seasons[-1]})
         players.append({
             "id": pid, "n": name, "b": born, "x": died,
             "a": [{"d": d, "how": typ, "from": frm} for d, typ, frm in acq],
             "y": seasons, "g": (r["g"] if r else 0) + api_games, "p": main_pos[:4],
-            "w": war.get(bbref), "mlbam": mlbam, "bbref": bbref, "hof": hof or None,
+            "w": war.get(bbref), "mlbam": mlbam, "bbref": bbref, "hof": hof or mlbam in hof_years or None,
+            "m": managed.get(pid),
         })
+    # "Cal Ripken Sr.", but only where a Jr. shares the name.
+    for p in players:
+        b = bio.get(p["id"])
+        if b and b["fullname"].endswith(" Sr.") and p["n"] + " Jr." in names.values():
+            p["n"] = names[p["id"]] = p["n"] + " Sr."
     for p in players:
         for k in [k for k, v in p.items() if v is None]:
             del p[k]
@@ -178,6 +188,8 @@ def main(argv=None):
                            "title": f"{names_fn(pid)} plays his final game for the {config.nickname(g['season'])}",
                            "detail": derive.score_text(g), "ids": [pid], "gid": g["gid"], "link": g["link"],
                            "opp": g["opp_name"], "score": [g["rs"], g["ra"]]})
+    events += derive.manager_events(games, names_fn, config.MANAGER_WIN_THRESHOLDS)
+    events += hall_of_fame_events(players, hof_years, hof_by_name)
     events += derive.game_events(games, walkoffs, itp, names_fn)
     events += derive.player_game_events(games, bats, pits, names_fn)
     derive.name_no_hitters(events, pits, names_fn)
@@ -249,7 +261,7 @@ def main(argv=None):
         raise SystemExit(1)
 
     OUT.mkdir(parents=True, exist_ok=True)
-    players.sort(key=lambda p: (p["y"][0], p["n"]))
+    players.sort(key=lambda p: (min(p["y"] + (p.get("m") or {}).get("y", [])), p["n"]))
     write(OUT / "players.json", players)
     write(OUT / "events.json", events)
     write(OUT / "records.json", recs)
@@ -262,6 +274,26 @@ def main(argv=None):
         text = ical.feed(players, events, config.SITE_URL, stamp, name, first_year)
         (ROOT / "site" / filename).write_text(text, encoding="utf-8", newline="")
     log(f"Wrote {len(players):,} players, {len(events):,} events, {len(recs)} record days (last game {meta['last_game']})")
+
+
+def hall_of_fame_events(players, hof_years, hof_by_name):
+    """Induction day for each franchise Hall of Famer, from config.HOF_CEREMONIES.
+    People without an MLB ID (some managers) are matched by name."""
+    events = []
+    for p in players:
+        year = hof_years.get(p.get("mlbam")) or (hof_by_name.get(p["n"]) if p.get("hof") and not p.get("mlbam") else None)
+        if not p.get("hof") or not year:
+            continue
+        if year not in config.HOF_CEREMONIES:
+            log(f"  no ceremony date for the Hall of Fame class of {year} ({p['n']}); add it to config.HOF_CEREMONIES")
+            continue
+        if config.HOF_CEREMONIES[year] is None:
+            continue
+        date, ceremony_year = config.HOF_CEREMONIES[year]
+        detail = f"Class of {year}" + (f", inducted with the class of {ceremony_year}" if ceremony_year != year else "")
+        events.append({"d": date, "t": "hof_induction", "title": f"{p['n']} is inducted into the Hall of Fame",
+                       "detail": detail, "ids": [p["id"]]})
+    return events
 
 
 def clinch_event(date, year, label, kind, games):

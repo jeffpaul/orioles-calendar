@@ -11,10 +11,14 @@ from . import config
 # Mirrors TYPE_SCORE and score() in site/app.js; keep the two in step.
 TYPE_SCORE = {
     "world_series": 95, "pennant": 90, "division_title": 85, "perfect_game": 85, "callout": 80, "no_hitter": 75,
-    "four_homer_game": 75, "career_milestone": 70, "series_win": 65, "cycle": 60, "ballpark_first": 55,
-    "ballpark_last": 50, "three_homer_game": 45, "strikeout_game": 45, "long_game": 40, "triple_play": 40,
+    "four_homer_game": 75, "hof_induction": 72, "career_milestone": 70, "mgr_milestone": 70, "series_win": 65,
+    "cycle": 60, "ballpark_first": 55, "mgr_first": 55, "mgr_return": 55, "ballpark_last": 50, "mgr_last": 50,
+    "three_homer_game": 45, "strikeout_game": 45, "mgr_stint_end": 45, "long_game": 40, "triple_play": 40,
     "big_win": 35, "walk_off": 30, "inside_the_park_hr": 28,
 }
+MANAGER_STINTS = ("mgr_first", "mgr_return", "mgr_last", "mgr_stint_end")
+INTERIM_GAMES = 100    # shorter managing stints stay on the site only
+MIN_MANAGER_GAMES = 300  # managers this long in the job count as notable, like a 10-WAR player
 PER_DAY = 10           # items listed in each day's description
 MIN_BIRTHDAY_WAR = 10  # birthdays and acquisitions of lesser players stay on the site only
 ACQUIRED_HOW = {
@@ -37,7 +41,19 @@ def event_score(e, player):
 
 
 def birthday_score(p):
-    return 8 + min(45, _war(p) * 1.5) + (15 if p.get("hof") else 0)
+    return 8 + min(45, _war(p) * 1.5) + (15 if p.get("hof") else 0) + (10 if _managed(p) >= MIN_MANAGER_GAMES else 0)
+
+
+def _managed(p):
+    return (p.get("m") or {}).get("g", 0)
+
+
+def notable(p):
+    return p.get("hof") or _war(p) >= MIN_BIRTHDAY_WAR or _managed(p) >= MIN_MANAGER_GAMES
+
+
+def last_year(p):
+    return max(p["y"] + (p.get("m") or {}).get("y", []))
 
 
 def day_items(players, events, first_year=1901, fold_leap=True):
@@ -57,10 +73,14 @@ def day_items(players, events, first_year=1901, fold_leap=True):
         player = by_id.get(e["ids"][0]) if len(e["ids"]) == 1 else None
         if e["t"] in ("debut", "final_game") and not (player and (player.get("hof") or _war(player) >= 5)):
             continue
+        if e["t"] in MANAGER_STINTS and e.get("n", 0) < INTERIM_GAMES:
+            continue
         add(e["d"], event_score(e, player), e["title"])
     for p in players:
-        if p.get("b") and len(p["b"]) == 10 and (p.get("hof") or _war(p) >= MIN_BIRTHDAY_WAR):
-            add(p["b"], birthday_score(p), f"{p['n']} is born", era_year=p["y"][-1])
+        if p.get("b") and len(p["b"]) == 10 and notable(p):
+            add(p["b"], birthday_score(p), f"{p['n']} is born", era_year=last_year(p))
+        if p.get("x") and len(p["x"]) == 10 and notable(p):
+            add(p["x"], 5 + min(20, _war(p) * 0.5), f"{p['n']} dies", era_year=last_year(p))  # rarely leads a day
         for a in p.get("a", []):
             if len(a["d"]) == 10 and (p.get("hof") or _war(p) >= MIN_BIRTHDAY_WAR):
                 how = ACQUIRED_HOW.get(a["how"], "")

@@ -114,7 +114,7 @@ def load_games(zips, opp_names):
                 "rs": _int(us["b_r"]), "ra": _int(them["b_r"]),
                 "line_us": line(us), "line_them": line(them),
                 "innings": max(len(line(us)), len(line(them))),
-                "site": g["site"], "tp": _int(us["d_tp"]),
+                "site": g["site"], "tp": _int(us["d_tp"]), "mgr": us["mgr"] or None,
                 "p_h": _int(us["p_h"]), "p_bfp": _int(us["p_bfp"]), "p_outs": _int(us["p_ipouts"]),
                 "link": f"https://www.baseball-reference.com/boxes/{gid[:3]}/{gid}.shtml",
                 "src": "retrosheet",
