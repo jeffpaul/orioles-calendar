@@ -457,8 +457,9 @@ DTSTART;VALUE=DATE:20000326
 RRULE:FREQ=YEARLY
 TRANSP:TRANSPARENT
 SUMMARY:Craig Albernaz manages his first game for the Orioles (2026)
-DESCRIPTION:2026: Craig Albernaz manages his first game for the Orioles\n\n
- More: https://jeffpaul.github.io/orioles-calendar/#03-26
+DESCRIPTION:2026: Craig Albernaz manages his first game for the Orioles\n20
+ 26: Pete Alonso plays his first game for the Orioles\n\nMore: https://jeff
+ paul.github.io/orioles-calendar/#03-26
 URL:https://jeffpaul.github.io/orioles-calendar/#03-26
 END:VEVENT
 BEGIN:VEVENT
